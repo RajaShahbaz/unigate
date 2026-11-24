@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationManagementController;
+use App\Http\Controllers\Admin\UniversityManagementController;
+use App\Http\Controllers\Admin\StudentManagementController;
 use App\Http\Controllers\AddonController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\AnnouncementController;
@@ -27,6 +30,7 @@ use App\Http\Controllers\GuardianController;
 use App\Http\Controllers\GuidanceController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\InstallerController;
+use App\Http\Controllers\JazzCashGatewayController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LeaveMasterController;
@@ -62,8 +66,22 @@ use App\Http\Controllers\TimetableController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WebSettingsController;
+use App\Http\Controllers\University\ApplicationDocumentController;
+use App\Http\Controllers\University\UniversityAuthController;
+use App\Http\Controllers\University\UniversityDashboardController;
+use App\Http\Controllers\University\UniversityApplicationController;
+use App\Http\Controllers\University\UniversityFormFieldController;
+use App\Http\Controllers\University\UniversityProfileController;
+use App\Http\Controllers\University\UniversityProgramController;
+use App\Http\Controllers\University\UniversityGalleryController;
+use App\Http\Controllers\University\UniversityScholarshipController;
+use App\Http\Controllers\University\UniversityAdmissionRequirementController;
+use App\Http\Controllers\University\CustomFormStepController;
+use App\Http\Controllers\StudentPortal\StudentPortalController;
+use App\Http\Controllers\UserPortal\UserDashboardController;
 use App\Models\User;
 use App\Services\CachingService;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -88,14 +106,16 @@ Route::post('schools/registration', [SchoolController::class, 'registration']);
 Route::post('contact', [Controller::class, 'contact']);
 Route::get('subscription/cron-job', [Controller::class, 'cron_job']);
 Route::get('set-language/{lang}', [LanguageController::class, 'set_language']);
+    Route::post('pay-with-wallet',[JazzCashGatewayController::class, 'payWithWallet']);
+    Route::post('card-payment',[JazzCashGatewayController::class, 'cardPayment']);
 
-Route::domain('{subdomain}.' . parse_url(Request::getSchemeAndHttpHost(), PHP_URL_HOST))->group(function () {
-    Route::get('/', [Controller::class, 'index']);
-});
+// Route::domain('{subdomain}.' . parse_url(Request::getSchemeAndHttpHost(), PHP_URL_HOST))->group(function () {
+//     Route::get('/', [Controller::class, 'index']);
+// });
 
-Route::domain('{subdomain}' . '.eschoolsaas.thewrteam.in')->group(function () {
-    Route::get('/', [Controller::class, 'index']);
-});
+// Route::domain('{subdomain}' . '.eschoolsaas.thewrteam.in')->group(function () {
+//     Route::get('/', [Controller::class, 'index']);
+// });
 
 Route::group(['prefix' => 'school'], static function () {
     Route::get('about-us', [Controller::class, 'about_us']);
@@ -108,6 +128,8 @@ Route::group(['prefix' => 'school'], static function () {
     Route::get('terms-conditions', [Controller::class, 'terms_conditions']);
     Route::get('privacy-policy', [Controller::class, 'privacy_policy']);
 });
+
+// Public Pages (Root Level)
 
 
 Route::group(['prefix' => 'install'], static function () {
@@ -146,15 +168,15 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
 
             Route::delete('payroll-setting/{id}',[StaffController::class,'deletePayrollSetting']);
             Route::put('payroll-setting/{id}',[StaffController::class,'updatePayrollSetting']);
-            
+
 
         });
-        
+
         Route::resource('staff', StaffController::class);
         Route::put("staff/{id}/change-status", [StaffController::class, 'restore'])->name('staff.restore');
         Route::delete("staff/{id}/deleted", [StaffController::class, 'trash'])->name('staff.trash');
         Route::post("staff/change-status-bulk", [StaffController::class, 'changeStatusBulk'])->name('staff.change-status-bulk');
-       
+
 
         /*** Medium ***/
         Route::group(['prefix' => 'mediums'], static function () {
@@ -209,7 +231,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
             Route::put("/{id}/restore", [TeacherController::class, 'restore'])->name('teachers.restore');
             Route::delete("/{id}/deleted", [TeacherController::class, 'trash'])->name('teachers.trash');
             Route::put("change/status/{id}", [TeacherController::class, 'changeStatus'])->name('teachers.change-status');
-            Route::post("/change-status-bulk", [TeacherController::class, 'changeStatusBulk'])->name('staff.change-status-bulk');
+            // Route::post("/change-status-bulk", [TeacherController::class, 'changeStatusBulk'])->name('staff.change-status-bulk');
             Route::get('download-dummy-file', [TeacherController::class, 'downloadSampleFile'])->name('teachers.bulk-data-sample');
             Route::get("create-bulk-upload",[TeacherController::class,'bulkUploadIndex'])->name('teachers.create-bulk-upload');
             Route::post("store-bulk-upload",[TeacherController::class,'storeBulkUpload'])->name('teachers.store-bulk-upload');
@@ -225,12 +247,12 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::group(['prefix' => 'students'], static function () {
             Route::get('create-bulk', [StudentController::class, 'createBulkData'])->name('students.create-bulk-data');
             Route::post('store-bulk', [StudentController::class, 'storeBulkData'])->name('students.store-bulk-data');
-            
+
             // Update bulk profile student & guardian
             Route::get('update-profile', [StudentController::class, 'update_profile'])->name('students.upload-profile');
             Route::get('list/{id?}', [StudentController::class, 'list'])->name('students.list');
             Route::post('update-profile', [StudentController::class, 'store_update_profile'])->name('students.update-profile');
-            
+
 
             Route::get('download-file', [StudentController::class, 'downloadSampleFile'])->name('student.bulk-data-sample');
             Route::delete('change-status/{id}', [StudentController::class, 'changeStatus'])->name('student.change-status');
@@ -250,7 +272,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
             Route::get('generate-id-card', [StudentController::class, 'generate_id_card_index'])->name('students.generate-id-card-index');
             Route::post('generate-id-card', [StudentController::class, 'generate_id_card'])->name('students.generate-id-card');
 
-            // 
+            //
             Route::get('admission-form', [StudentController::class, 'admissionForm'])->name('admission.form');
 
         });
@@ -363,7 +385,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::get('exams/result-report/{session_year_id}/{exam_name}', [ExamController::class, 'resultReport']);
         Route::get('exams/timetable', [ExamController::class, 'examTimetableIndex'])->name('exams.timetable');
         Route::get('exams/timetable/{id?}', [ExamController::class, 'examTimetableShow'])->name('exams.timetable.show');
-        
+
 
         Route::resource('exams', ExamController::class);
 
@@ -378,7 +400,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::get('language-sample', [LanguageController::class, 'language_sample']);
         Route::get('language-json-file/{code?}', [LanguageController::class, 'language_file'])->name('language.json.file');
 
-        
+
         Route::get('language-list', [LanguageController::class, 'show']);
         Route::resource('language', LanguageController::class);
 
@@ -495,10 +517,10 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
 
             Route::get('email-template', [SchoolSettingsController::class, 'emailTemplate'])->name('school-settings.email.template');
             Route::put('email-template', [SchoolSettingsController::class, 'emailTemplateUpdate'])->name('school-settings.email-template.update');
-            
+
 
             Route::get('refund-cancellation', [SchoolSettingsController::class, 'refund_cancellation'])->name('school-settings.refund-cancellation');
-            // 
+            //
         });
         Route::resource('school-settings', SchoolSettingsController::class);
 
@@ -507,6 +529,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
 
         /*** School ***/
         Route::group(['prefix' => 'schools'], static function () {
+            Route::get("/{id}/details", [SchoolController::class, 'details'])->name('schools.details');
             Route::put("/{id}/restore", [SchoolController::class, 'restore'])->name('schools.restore');
             Route::delete("/{id}/deleted", [SchoolController::class, 'trash'])->name('schools.trash');
             // Route::get('/admin/search', [SchoolController::class, 'adminSearch']);
@@ -516,6 +539,25 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
 
         });
         Route::resource('schools', SchoolController::class);
+
+        Route::middleware('role:Super Admin')->group(function () {
+            // Applications
+            Route::get('admin/applications', [ApplicationManagementController::class, 'index'])->name('admin.applications.index');
+            Route::get('admin/applications/{id}', [ApplicationManagementController::class, 'show'])->name('admin.applications.show');
+
+            // Universities
+            Route::get('admin/universities', [UniversityManagementController::class, 'index'])->name('admin.universities.index');
+            Route::get('admin/universities/create', [UniversityManagementController::class, 'create'])->name('admin.universities.create');
+            Route::post('admin/universities', [UniversityManagementController::class, 'store'])->name('admin.universities.store');
+            Route::get('admin/universities/{id}', [UniversityManagementController::class, 'show'])->name('admin.universities.show');
+            Route::get('admin/universities/{id}/edit', [UniversityManagementController::class, 'edit'])->name('admin.universities.edit');
+            Route::put('admin/universities/{id}', [UniversityManagementController::class, 'update'])->name('admin.universities.update');
+            Route::delete('admin/universities/{id}', [UniversityManagementController::class, 'destroy'])->name('admin.universities.destroy');
+
+            // Students
+            Route::get('admin/students', [StudentManagementController::class, 'index'])->name('admin.students.index');
+            Route::get('admin/students/{id}', [StudentManagementController::class, 'show'])->name('admin.students.show');
+        });
 
         /*** Form Fields ***/
         Route::group(['prefix' => 'form-fields'], static function () {
@@ -536,14 +578,13 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::resource('package', PackageController::class);
 
         // Features
-        Route::get('features', [PackageController::class, 'features_list']);
-        Route::get('features/show', [PackageController::class, 'features_show'])->name('features.show');
+
 
         // Subscription
         Route::group(['prefix' => 'subscriptions'], static function () {
             Route::get('plan/{id}/type/{type}/current-plan/{isCurrentPlan?}', [SubscriptionController::class, 'plan']);
             Route::get('prepaid/package/{package_id}/{type?}/{isCurrentPlan?}', [SubscriptionController::class, 'prepaid_plan']);
-            
+
             Route::get('history', [SubscriptionController::class, 'history'])->name('subscriptions.history');
             Route::get('cancel-upcoming/{id?}', [SubscriptionController::class, 'cancel_upcoming'])->name('subscriptions.cancel.upcoming');
             Route::get('confirm-upcoming-plan/{id}', [SubscriptionController::class, 'confirm_upcoming_plan']);
@@ -611,7 +652,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::get('payroll/slip/{id?}',[PayrollController::class,'slip'])->name('payroll.slip');
         Route::get('payroll/slips',[PayrollController::class,'slip_index'])->name('payroll.slip.index');
         Route::get('payroll/slips/list',[PayrollController::class,'slip_list'])->name('payroll.slip.list');
-        
+
         Route::resource('payroll', PayrollController::class)->only(['index', 'store', 'show']);
 
         // Leave
@@ -667,7 +708,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
         Route::resource('gallery', GalleryController::class);
         Route::resource('notifications', NotificationController::class);
 
-        
+
         Route::group(['prefix' => 'web-settings'], static function () {
             Route::get('feature-section', [WebSettingsController::class, 'feature_section_index'])->name('web-settings.feature.sections');
             Route::post('feature-section', [WebSettingsController::class, 'feature_section_store'])->name('web-settings.feature.sections.store');
@@ -677,7 +718,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
             Route::delete('section/delete/{id}', [WebSettingsController::class, 'feature_section_delete'])->name('web-settings-section.destroy');
 
             Route::PATCH('feature-section/change/rank', [WebSettingsController::class, 'feature_section_rank'])->name('feature_section_rank');
-            
+
         });
 
         Route::group(['prefix' => 'school'], static function () {
@@ -686,7 +727,7 @@ Route::group(['middleware' => ['Role', 'auth', 'checkSchoolStatus', 'status']], 
                 Route::post('/', [WebSettingsController::class, 'school_store'])->name('school.web-settings.store');
 
             });
-            
+
         });
 
 
@@ -723,26 +764,24 @@ Route::post('webhook/stripe', [WebhookController::class, 'stripe']);
 Route::post('subscription/webhook/stripe', [SubscriptionWebhookController::class, 'stripe']);
 Route::post('subscription/webhook/razorpay', [SubscriptionWebhookController::class, 'razorpay']);
 
+// Application package Stripe checkout callbacks
+Route::get('application-packages/payment/success/{sessionId}', [\App\Http\Controllers\Api\ApplicationPackageController::class, 'stripeSuccess'])
+    ->name('application-packages.payment.success');
+Route::get('application-packages/payment/cancel/{sessionId}', [\App\Http\Controllers\Api\ApplicationPackageController::class, 'stripeCancel'])
+    ->name('application-packages.payment.cancel');
+
 // School terms & conditions
 Route::get('school-settings/{id}/terms-condition', [SchoolSettingsController::class, 'public_terms_condition']);
 Route::get('school-settings/{id}/privacy-policy', [SchoolSettingsController::class, 'public_privacy_policy']);
 Route::get('school-settings/{id}/refund-cancellation', [SchoolSettingsController::class, 'public_refund_cancellation']);
 // End school terms & conditions
 
-Route::get('page/privacy-policy', static function () {
-    $cache = app(CachingService::class);
-    echo htmlspecialchars_decode($cache->getSystemSettings('privacy_policy'));
-})->name('public.privacy-policy');
-
-Route::get('page/terms-conditions', static function () {
-    $cache = app(CachingService::class);
-    echo htmlspecialchars_decode($cache->getSystemSettings('terms_condition'));
-})->name('public.terms-conditions');
-
 Route::get('page/refund-cancellation', static function () {
     $cache = app(CachingService::class);
     echo htmlspecialchars_decode($cache->getSystemSettings('refund_cancellation'));
 })->name('public.refund-cancellation');
+
+// UniGate App Pages (Public Web Views)
 
 Route::get('school-terms-condition', static function () {
     $cache = app(CachingService::class);
@@ -866,6 +905,112 @@ Route::get('cache-flush', static function () {
     return redirect()->back();
 });
 
+/*
+|--------------------------------------------------------------------------
+| University Portal Routes
+|--------------------------------------------------------------------------
+|
+| Routes for university admin portal to manage applications, view student
+| profiles, manage university data, and create custom application forms
+|
+*/
+
+// University Authentication Routes (Guest)
+Route::group(['prefix' => 'university', 'as' => 'university.'], static function () {
+    Route::get('login', [UniversityAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [UniversityAuthController::class, 'login'])->name('login.post');
+
+    // Authenticated Routes
+    Route::group(['middleware' => 'university.auth'], static function () {
+        Route::get('logout', [UniversityAuthController::class, 'logout'])->name('logout');
+
+        // Dashboard
+        Route::get('dashboard', [UniversityDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', [UniversityDashboardController::class, 'index']);
+
+        // Profile Management
+        Route::get('profile', [UniversityAuthController::class, 'showProfile'])->name('profile');
+        Route::put('profile', [UniversityAuthController::class, 'updateProfile'])->name('profile.update');
+        Route::get('change-password', [UniversityAuthController::class, 'showChangePasswordForm'])->name('change-password');
+        Route::post('change-password', [UniversityAuthController::class, 'changePassword'])->name('change-password.post');
+
+        // University Profile & Data Management
+        Route::get('university-profile', [UniversityProfileController::class, 'show'])->name('university-profile');
+        Route::put('university-profile', [UniversityProfileController::class, 'update'])->name('university-profile.update');
+        Route::post('university-profile/programs', [UniversityProfileController::class, 'updatePrograms'])->name('university-profile.programs');
+
+        // Application Management
+        Route::get('applications', [UniversityApplicationController::class, 'index'])->name('applications.index');
+        Route::get('applications/{id}', [UniversityApplicationController::class, 'show'])->name('applications.show');
+        Route::post('applications/{id}/status', [UniversityApplicationController::class, 'updateStatus'])->name('applications.status');
+        Route::post('applications/{id}/notes', [UniversityApplicationController::class, 'addNotes'])->name('applications.notes');
+        Route::post('applications/{id}/documents/request-reupload', [ApplicationDocumentController::class, 'requestReupload'])->name('applications.documents.request-reupload');
+        Route::post('applications/bulk-status', [UniversityApplicationController::class, 'bulkUpdateStatus'])->name('applications.bulk-status');
+        Route::get('applications-export', [UniversityApplicationController::class, 'export'])->name('applications.export');
+        Route::get('applications-statistics', [UniversityApplicationController::class, 'statistics'])->name('applications.statistics');
+
+        // Custom Form Fields Management
+        Route::get('form-fields', [UniversityFormFieldController::class, 'index'])->name('form-fields.index');
+        Route::get('form-fields/create', [UniversityFormFieldController::class, 'create'])->name('form-fields.create');
+        Route::post('form-fields', [UniversityFormFieldController::class, 'store'])->name('form-fields.store');
+        Route::get('form-fields/{id}/edit', [UniversityFormFieldController::class, 'edit'])->name('form-fields.edit');
+        Route::put('form-fields/{id}', [UniversityFormFieldController::class, 'update'])->name('form-fields.update');
+        Route::delete('form-fields/{id}', [UniversityFormFieldController::class, 'destroy'])->name('form-fields.destroy');
+        Route::post('form-fields/{id}/toggle-status', [UniversityFormFieldController::class, 'toggleStatus'])->name('form-fields.toggle-status');
+        Route::post('form-fields/reorder', [UniversityFormFieldController::class, 'reorder'])->name('form-fields.reorder');
+
+        // Programs/Courses Management
+        Route::get('programs', [UniversityProgramController::class, 'index'])->name('programs.index');
+        Route::post('programs', [UniversityProgramController::class, 'store'])->name('programs.store');
+        Route::get('programs/{interestId}/edit', [UniversityProgramController::class, 'edit'])->name('programs.edit');
+        Route::put('programs/{interestId}', [UniversityProgramController::class, 'update'])->name('programs.update');
+        Route::delete('programs/{interestId}', [UniversityProgramController::class, 'destroy'])->name('programs.destroy');
+        Route::post('programs/bulk-add', [UniversityProgramController::class, 'bulkAdd'])->name('programs.bulk-add');
+        Route::get('programs-statistics', [UniversityProgramController::class, 'statistics'])->name('programs.statistics');
+
+        // Gallery Management
+        Route::get('gallery', [UniversityGalleryController::class, 'index'])->name('gallery.index');
+        Route::get('gallery/create', [UniversityGalleryController::class, 'create'])->name('gallery.create');
+        Route::post('gallery', [UniversityGalleryController::class, 'store'])->name('gallery.store');
+        Route::get('gallery/{id}/edit', [UniversityGalleryController::class, 'edit'])->name('gallery.edit');
+        Route::put('gallery/{id}', [UniversityGalleryController::class, 'update'])->name('gallery.update');
+        Route::delete('gallery/{id}', [UniversityGalleryController::class, 'destroy'])->name('gallery.destroy');
+
+        // Scholarships Management
+        Route::get('scholarships', [UniversityScholarshipController::class, 'index'])->name('scholarships.index');
+        Route::get('scholarships/create', [UniversityScholarshipController::class, 'create'])->name('scholarships.create');
+        Route::post('scholarships', [UniversityScholarshipController::class, 'store'])->name('scholarships.store');
+        Route::get('scholarships/{id}/edit', [UniversityScholarshipController::class, 'edit'])->name('scholarships.edit');
+        Route::put('scholarships/{id}', [UniversityScholarshipController::class, 'update'])->name('scholarships.update');
+        Route::delete('scholarships/{id}', [UniversityScholarshipController::class, 'destroy'])->name('scholarships.destroy');
+
+        // Admission Requirements Management
+        Route::get('admission-requirements', [UniversityAdmissionRequirementController::class, 'index'])->name('admission-requirements.index');
+        Route::get('admission-requirements/create', [UniversityAdmissionRequirementController::class, 'create'])->name('admission-requirements.create');
+        Route::post('admission-requirements', [UniversityAdmissionRequirementController::class, 'store'])->name('admission-requirements.store');
+        Route::get('admission-requirements/{id}/edit', [UniversityAdmissionRequirementController::class, 'edit'])->name('admission-requirements.edit');
+        Route::put('admission-requirements/{id}', [UniversityAdmissionRequirementController::class, 'update'])->name('admission-requirements.update');
+        Route::delete('admission-requirements/{id}', [UniversityAdmissionRequirementController::class, 'destroy'])->name('admission-requirements.destroy');
+
+        // Custom Multi-Step Form Builder
+        Route::get('custom-form', [CustomFormStepController::class, 'index'])->name('custom-form.index');
+        Route::post('custom-form/use-template', [CustomFormStepController::class, 'useDefaultTemplate'])->name('custom-form.use-template');
+        Route::get('custom-form/create-step', [CustomFormStepController::class, 'createStep'])->name('custom-form.create-step');
+        Route::post('custom-form/store-step', [CustomFormStepController::class, 'storeStep'])->name('custom-form.store-step');
+        Route::get('custom-form/step/{id}/edit', [CustomFormStepController::class, 'editStep'])->name('custom-form.edit-step');
+        Route::put('custom-form/step/{id}', [CustomFormStepController::class, 'updateStep'])->name('custom-form.update-step');
+        Route::delete('custom-form/step/{id}', [CustomFormStepController::class, 'destroyStep'])->name('custom-form.destroy-step');
+        Route::post('custom-form/reorder-steps', [CustomFormStepController::class, 'reorderSteps'])->name('custom-form.reorder-steps');
+
+        // Field Management
+        Route::get('custom-form/step/{stepId}/fields', [CustomFormStepController::class, 'manageFields'])->name('custom-form.manage-fields');
+        Route::post('custom-form/step/{stepId}/fields', [CustomFormStepController::class, 'storeField'])->name('custom-form.store-field');
+        Route::put('custom-form/step/{stepId}/field/{fieldId}', [CustomFormStepController::class, 'updateField'])->name('custom-form.update-field');
+        Route::delete('custom-form/step/{stepId}/field/{fieldId}', [CustomFormStepController::class, 'destroyField'])->name('custom-form.destroy-field');
+        Route::post('custom-form/step/{stepId}/reorder-fields', [CustomFormStepController::class, 'reorderFields'])->name('custom-form.reorder-fields');
+    });
+});
+
 
 Route::get('demo-tokens', static function () {
     echo "<pre>";
@@ -886,4 +1031,79 @@ Route::get('demo-tokens', static function () {
             return $student->createToken($student->first_name)->plainTextToken;
         });
     }
+});
+Route::get('privacy-policy', [\App\Http\Controllers\Api\AppPageController::class, 'privacyPolicyView'])->name('app.privacy-policy');
+Route::get('terms-conditions', [\App\Http\Controllers\Api\AppPageController::class, 'termsConditionsView'])->name('app.terms-conditions');
+Route::get('delete-account', [\App\Http\Controllers\Api\AppPageController::class, 'accountDeletionView'])->name('app.delete-account');
+
+// Public Pages (Root Level - No Authentication Required)
+Route::get('about-us', [Controller::class, 'about_us'])->name('about-us');
+Route::get('contact-us', [Controller::class, 'contact_us'])->name('contact-us');
+Route::post('contact-us', [Controller::class, 'contact_form']);
+Route::get('features', [Controller::class, 'features'])->name('features');
+Route::get('pricing', [Controller::class, 'pricing'])->name('pricing');
+Route::get('universities', [Controller::class, 'universities'])->name('universities');
+Route::get('universities/{id}', [Controller::class, 'universityDetail'])->name('university.detail');
+
+// Application Form (Requires Authentication)
+Route::middleware('auth')->group(function () {
+    Route::get('universities/{id}/apply', [\App\Http\Controllers\Api\MultiStepApplicationController::class, 'getFormView'])->name('university.apply');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Student (University Admission) Web Portal
+|--------------------------------------------------------------------------
+| Same data as mobile API: dashboard, education, interests, cities, favorites,
+| notifications, account, documents, applications, packages, JazzCash payments.
+| Eligible users: role Student with no school_id (not an e-school LMS student).
+*/
+Route::group([
+    'prefix' => 'student',
+    'as' => 'student.portal.',
+    'middleware' => ['auth', 'student.portal'],
+], static function () {
+    Route::get('/', static function () {
+        return redirect()->route('student.portal.dashboard');
+    });
+
+    Route::get('dashboard', [StudentPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('education', [StudentPortalController::class, 'education'])->name('education');
+    Route::get('interests', [StudentPortalController::class, 'interests'])->name('interests');
+    Route::get('preferred-cities', [StudentPortalController::class, 'preferredCities'])->name('preferred-cities');
+    Route::get('favorites', [StudentPortalController::class, 'favorites'])->name('favorites');
+    Route::get('notifications', [StudentPortalController::class, 'notifications'])->name('notifications');
+    Route::post('notifications/{id}/read', [StudentPortalController::class, 'markNotificationRead'])->name('notifications.read');
+    Route::post('notifications/mark-all-read', [StudentPortalController::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read');
+    Route::get('account', [StudentPortalController::class, 'account'])->name('account');
+    Route::post('account/delete', [StudentPortalController::class, 'deleteAccount'])->name('account.delete');
+    Route::get('documents', [StudentPortalController::class, 'documents'])->name('documents');
+    Route::get('applications', [StudentPortalController::class, 'applications'])->name('applications');
+    Route::get('applications/{id}', [StudentPortalController::class, 'applicationShow'])->name('applications.show');
+    Route::get('packages', [StudentPortalController::class, 'packages'])->name('packages');
+    Route::get('payments', [StudentPortalController::class, 'payments'])->name('payments');
+    Route::post('logout', [StudentPortalController::class, 'logout'])->name('logout');
+});
+
+/*
+|--------------------------------------------------------------------------
+| User Web Portal
+|--------------------------------------------------------------------------
+| Dedicated web portal routes for authenticated university-admission users.
+*/
+Route::group([
+    'prefix' => 'user',
+    'as' => 'user.portal.',
+    'middleware' => ['auth', 'student.portal'],
+], static function () {
+    Route::get('/', static function () {
+        return redirect()->route('user.portal.dashboard');
+    });
+
+    Route::get('dashboard', [UserDashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('universities', [UserDashboardController::class, 'universities'])->name('universities');
+    Route::get('applications', [UserDashboardController::class, 'applications'])->name('applications');
+    Route::get('applications/{id}', [UserDashboardController::class, 'applicationShow'])->name('applications.show');
+    Route::get('documents', [UserDashboardController::class, 'documents'])->name('documents');
+    Route::post('logout', [UserDashboardController::class, 'logout'])->name('logout');
 });

@@ -58,7 +58,7 @@ class StaffController extends Controller {
 
     }
 
-    public function index() {
+    public function index(Request $request) {
         ResponseService::noFeatureThenRedirect('Staff Management');
         ResponseService::noPermissionThenRedirect('staff-list');
         $roles = Role::where('custom_role', 1)->whereNot('name','Teacher')->get();

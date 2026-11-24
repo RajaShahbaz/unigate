@@ -54,8 +54,8 @@ class StudentController extends Controller {
         $this->subscriptionService = $subscriptionService;
     }
 
-    public function index() {
-        ResponseService::noPermissionThenRedirect('student-list');
+    public function index(Request $request) {
+        // ResponseService::noPermissionThenRedirect('student-list');
         $class_sections = $this->classSection->all(['*'], ['class', 'class.stream', 'section', 'medium']);
         $extraFields = $this->formFields->defaultModel()->orderBy('rank')->get();
         $sessionYears = $this->sessionYear->all();
@@ -65,7 +65,7 @@ class StudentController extends Controller {
     }
 
     public function create() {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         $class_sections = $this->classSection->all(['*'], ['class', 'class.stream', 'section', 'medium']);
         $sessionYear = $this->cache->getDefaultSessionYear();
         $get_student = $this->student->builder()->latest('id')->withTrashed()->pluck('id')->first();
@@ -77,7 +77,7 @@ class StudentController extends Controller {
     }
 
     public function store(Request $request) {
-        ResponseService::noPermissionThenRedirect(['student-create']);
+        // ResponseService::noPermissionThenRedirect(['student-create']);
         $request->validate([
             'first_name'          => 'required',
             'last_name'           => 'required',
@@ -121,7 +121,7 @@ class StudentController extends Controller {
                 // If prepaid plan check student limit
                 if ($subscription && $subscription->package_type == 0) {
                     $status = $this->subscriptionService->check_user_limit($subscription, "Students");
-                    
+
                     if (!$status) {
                         ResponseService::errorResponse('You reach out limits');
                     }
@@ -194,7 +194,7 @@ class StudentController extends Controller {
     }
 
     public function show(Request $request) {
-        ResponseService::noPermissionThenRedirect('student-list');
+        // ResponseService::noPermissionThenRedirect('student-list');
         $offset = request('offset', 0);
         $limit = request('limit', 10);
         $sort = request('sort', 'id');
@@ -290,7 +290,7 @@ class StudentController extends Controller {
             $tempRow['eng_guardian_gender'] = $guardian_gender;
             // $tempRow['user.dob'] = format_date($row->user->dob);
             // $tempRow['admission_date'] = format_date($row->admission_date);
-            
+
             // $tempRow['extra_fields'] = $row->user->extra_student_details()->has('form_field')->with('form_field')->get();
             $tempRow['extra_fields'] = $row->user->extra_student_details;
             foreach ($row->user->extra_student_details as $key => $field) {
@@ -307,7 +307,7 @@ class StudentController extends Controller {
                 }
                 $tempRow[$field->form_field->name] = $data;
             }
-            
+
             $tempRow['operate'] = $operate;
             $rows[] = $tempRow;
         }
@@ -331,7 +331,7 @@ class StudentController extends Controller {
     public function changeStatus($userId) {
         try {
             // ResponseService::noFeatureThenSendJson('Student Management');
-            ResponseService::noPermissionThenRedirect('student-edit');
+            // ResponseService::noPermissionThenRedirect('student-edit');
             DB::beginTransaction();
             $user = $this->user->findTrashedById($userId);
             if ($user->status == 0) {
@@ -339,13 +339,13 @@ class StudentController extends Controller {
                 // If prepaid plan check student limit
                 if ($subscription && $subscription->package_type == 0) {
                     $status = $this->subscriptionService->check_user_limit($subscription, "Students");
-                    
+
                     if (!$status) {
                         ResponseService::errorResponse('You reach out limits');
                     }
                 }
             }
-                        
+
             $this->user->builder()->where('id', $userId)->withTrashed()->update(['status' => $user->status == 0 ? 1 : 0, 'deleted_at' => $user->status == 1 ? now() : null]);
             DB::commit();
             ResponseService::successResponse('Data Updated Successfully');
@@ -358,7 +358,7 @@ class StudentController extends Controller {
 
     public function changeStatusBulk(Request $request) {
         // ResponseService::noFeatureThenSendJson('Student Management');
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         try {
             DB::beginTransaction();
             foreach (json_decode($request->ids, false, 512, JSON_THROW_ON_ERROR) as $key => $userId) {
@@ -368,7 +368,7 @@ class StudentController extends Controller {
                     // If prepaid plan check student limit
                     if ($subscription && $subscription->package_type == 0) {
                         $status = $this->subscriptionService->check_user_limit($subscription,"Students");
-                        
+
                         if (!$status) {
                             ResponseService::errorResponse('You reach out limits');
                         }
@@ -401,14 +401,14 @@ class StudentController extends Controller {
     }
 
     public function createBulkData() {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         $class_section = $this->classSection->all(['*'], ['class', 'class.stream', 'section', 'medium']);
         $sessionYears = $this->sessionYear->all();
         return view('students.add_bulk_data', compact('class_section', 'sessionYears'));
     }
 
     public function storeBulkData(Request $request) {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         $validator = Validator::make($request->all(), [
             'session_year_id'  => 'required|numeric',
             'class_section_id' => 'required',
@@ -434,7 +434,7 @@ class StudentController extends Controller {
     }
 
     public function resetPasswordShow() {
-        ResponseService::noPermissionThenRedirect('reset-password-list');
+        // ResponseService::noPermissionThenRedirect('reset-password-list');
         $offset = request('offset', 0);
         $limit = request('limit', 10);
         $sort = request('sort', 'id');
@@ -473,7 +473,7 @@ class StudentController extends Controller {
     }
 
     public function resetPasswordUpdate(Request $request) {
-        ResponseService::noPermissionThenRedirect('student-change-password');
+        // ResponseService::noPermissionThenRedirect('student-change-password');
         try {
             DB::beginTransaction();
             $dob = date('dmY', strtotime($request->dob));
@@ -490,14 +490,14 @@ class StudentController extends Controller {
     }
 
     public function rollNumberIndex() {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         $class_section = $this->classSection->all(['*'], ['class', 'class.stream', 'section', 'medium']);
 
         return view('students.assign_roll_no', compact('class_section'));
     }
 
     public function rollNumberUpdate(Request $request) {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         $validator = Validator::make(
             $request->all(),
             ['roll_number_data.*.roll_number' => 'required',],
@@ -536,9 +536,9 @@ class StudentController extends Controller {
     }
 
     public function rollNumberShow(Request $request) {
-        ResponseService::noPermissionThenRedirect('student-create');
+        // ResponseService::noPermissionThenRedirect('student-create');
         try {
-            ResponseService::noPermissionThenRedirect('student-list');
+            // ResponseService::noPermissionThenRedirect('student-list');
             $currentSessionYear = $this->cache->getDefaultSessionYear();
             $class_section_id = $request->class_section_id;
             $sql = $this->user->builder()->with('student');
@@ -623,16 +623,16 @@ class StudentController extends Controller {
 
     public function update_profile()
     {
-        ResponseService::noPermissionThenRedirect('student-edit');
-        
+        // ResponseService::noPermissionThenRedirect('student-edit');
+
         $class_sections = $this->classSection->all(['*'], ['class', 'class.stream', 'section', 'medium']);
         return view('students.add_bulk_profile',compact('class_sections'));
-        
+
     }
 
     public function list($id = null, Request $request)
     {
-        ResponseService::noPermissionThenRedirect('student-edit');
+        // ResponseService::noPermissionThenRedirect('student-edit');
         $search = request('search');
 
         $res = array();
@@ -666,13 +666,13 @@ class StudentController extends Controller {
             $sql = $sql->orderBy('roll_number', 'ASC');
             $res = $sql->get();
         }
-        
+
         $bulkData = array();
         $bulkData['total'] = $total;
         $rows = array();
         $no = 1;
         foreach ($res as $row) {
-            
+
             $tempRow = $row->toArray();
             $tempRow['no'] = $no++;
             $rows[] = $tempRow;
@@ -707,7 +707,7 @@ class StudentController extends Controller {
             }
             $this->user->upsert($data,['id'],['image']);
             ResponseService::successResponse('Profile Updated Successfully');
-            
+
         } catch (\Throwable $th) {
             ResponseService::logErrorResponse($th);
             ResponseService::errorResponse();
@@ -764,7 +764,7 @@ class StudentController extends Controller {
             $pdf = PDF::loadView('students.students_id_card',compact('students','sessionYear','valid_until','settings'));
             $pdf->setPaper($customPaper);
 
-            
+
             return $pdf->stream();
             return view('students.id_card_pdf');
         } catch (\Throwable $th) {
@@ -790,5 +790,5 @@ class StudentController extends Controller {
         return $pdf->stream();
     }
 
-    
+
 }

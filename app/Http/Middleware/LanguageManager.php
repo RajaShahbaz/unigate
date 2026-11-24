@@ -22,6 +22,10 @@ class LanguageManager
      */
     public function handle(Request $request, Closure $next)
     {
+        // Skip middleware for console commands and mail rendering
+        if (app()->runningInConsole() || !$request->hasSession()) {
+            return $next($request);
+        }
 
         try {            
             if (Session::has('locale') && Auth::user() && Session::get('locale') == Auth::user()->language) {
@@ -54,8 +58,15 @@ class LanguageManager
                 }
             }
         } catch (\Throwable $th) {
-            if (Session::has('locale')) {
-                app()->setLocale(Session::get('locale'));
+            // Fallback to default locale if session is not available
+            try {
+                if (Session::has('locale')) {
+                    app()->setLocale(Session::get('locale'));
+                } else {
+                    app()->setLocale('en');
+                }
+            } catch (\Throwable $e) {
+                app()->setLocale('en');
             }
         }
         return $next($request);

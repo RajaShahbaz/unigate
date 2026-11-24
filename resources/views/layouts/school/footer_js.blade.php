@@ -158,9 +158,9 @@
 </script>
 
 <script>
-    @if (Session::has('success'))
+    @if (session()->has('success'))
         $.toast({
-            text: '{{ Session::get('success') }}',
+            text: '{{ session('success') }}',
             showHideTransition: 'slide',
             icon: 'success',
             loaderBg: '#f96868',
@@ -169,9 +169,9 @@
         });
     @endif
 
-    @if (Session::has('error'))
+    @if (session()->has('error'))
         $.toast({
-            text: '{{ Session::get('error') }}',
+            text: '{{ session('error') }}',
             showHideTransition: 'slide',
             icon: 'error',
             loaderBg: '#f2a654',

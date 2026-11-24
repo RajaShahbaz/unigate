@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\TimetableCollection;
 use App\Http\Resources\UserDataResource;
 use App\Models\AssignmentSubmission;
+use App\Models\User;
 use App\Repositories\Announcement\AnnouncementInterface;
 use App\Repositories\Assignment\AssignmentInterface;
 use App\Repositories\AssignmentSubmission\AssignmentSubmissionInterface;
@@ -90,7 +91,7 @@ class StudentApiController extends Controller {
     }
 
 
-    #[NoReturn] public function login(Request $request) {
+    public function login(Request $request) {
         $validator = Validator::make($request->all(), [
             'gr_number' => 'required', 'password' => 'required',
         ]);
@@ -1357,5 +1358,20 @@ class StudentApiController extends Controller {
             ResponseService::logErrorResponse($e);
             ResponseService::errorResponse();
         }
+    }
+
+    public function profile()
+    {
+       $user = User::with([
+        'interests:id,name',
+        'preferredCities:id,name',
+        'education',
+        'favoriteUniversities'
+    ])->find(Auth::user()->id);
+        return response()->json([
+                'error' => false,
+                'message' => 'User profiel details retrieved successfully',
+                'data' => $user
+            ]);
     }
 }

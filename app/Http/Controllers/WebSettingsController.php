@@ -30,11 +30,11 @@ class WebSettingsController extends Controller
         $this->featureSectionList = $featureSectionList;
         $this->schoolSettings = $schoolSettings;
     }
-    
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
         ResponseService::noPermissionThenRedirect('web-settings');
@@ -73,7 +73,7 @@ class WebSettingsController extends Controller
         ],[
             'custom_package_description.required_if' => 'The custom package description field is required when custom package status is enable.'
         ]);
-        
+
 
         $settings = array(
             'home_image', 'hero_title_1', 'hero_title_2', 'hero_title_2_image', 'about_us_title', 'about_us_heading', 'about_us_description', 'about_us_points', 'about_us_image', 'custom_package_status', 'custom_package_description', 'download_our_app_image', 'download_our_app_description', 'facebook', 'instagram', 'linkedin', 'footer_text','short_description', 'theme_primary_color',  'theme_secondary_color', 'theme_secondary_color_1',  'theme_primary_background_color', 'theme_text_secondary_color', 'display_school_logos', 'display_counters'
@@ -203,11 +203,11 @@ class WebSettingsController extends Controller
         $rows = array();
         $no = 1;
 
-        foreach ($res as $row) {            
+        foreach ($res as $row) {
             // $operate = BootstrapTableService::editButton(route('web-settings-section.update', $row->id));
             $operate = BootstrapTableService::button('fa fa-edit', route('web-settings-section.edit',$row->id), ['btn-gradient-info'], ['title' => trans("edit")]);
             $operate .= BootstrapTableService::deleteButton(route('web-settings-section.destroy', $row->id));
-            
+
             $tempRow = $row->toArray();
             $tempRow['no'] = $no++;
             $tempRow['operate'] = $operate;
@@ -224,7 +224,7 @@ class WebSettingsController extends Controller
         $featureSection = $this->featureSection->builder()->with('feature_section_list')->where('id',$id)->first();
 
         return view('web_settings.feature_section_edit',compact('featureSection'));
-        
+
     }
 
     public function web_settings_update(Request $request, $id)
@@ -272,7 +272,7 @@ class WebSettingsController extends Controller
                         // 'image' => $section['image']->store('feature_section','public'),
                     ];
                 }
-                
+
             }
             // With image
             $this->featureSectionList->upsert($data_with_image, ['id'],['feature_section_id', 'feature', 'description', 'image']);
@@ -331,7 +331,7 @@ class WebSettingsController extends Controller
             ResponseService::errorResponse();
         }
     }
-    
+
     public function school_index()
     {
         $systemSettings = $this->cache->getSystemSettings();
@@ -422,7 +422,7 @@ class WebSettingsController extends Controller
             "short_description" => 'nullable',
             "footer_text" => 'nullable',
             "footer_logo" => 'nullable',
-            
+
 
             "facebook" => 'nullable',
             "instagram" => 'nullable',
@@ -431,7 +431,7 @@ class WebSettingsController extends Controller
         ];
 
         $validator = Validator::make($request->all(), $settings);
-        
+
         if ($validator->fails()) {
             ResponseService::validationError($validator->errors()->first());
         }
@@ -455,7 +455,7 @@ class WebSettingsController extends Controller
                             "name" => $key,
                             "data" => $request->$key,
                             "type" => "string"
-                        ];    
+                        ];
                     } else {
                         $data[] = [
                             "name" => $key,
@@ -463,9 +463,9 @@ class WebSettingsController extends Controller
                             "type" => "string"
                         ];
                     }
-                    
+
                 }
-            }            
+            }
             $this->schoolSettings->upsert($data, ["name"], ["data"]);
             $this->cache->removeSchoolCache(config('constants.CACHE.SCHOOL.SETTINGS'));
 
@@ -475,7 +475,7 @@ class WebSettingsController extends Controller
             ResponseService::logErrorResponse($th);
             ResponseService::errorResponse();
         }
-        
+
 
 
     }

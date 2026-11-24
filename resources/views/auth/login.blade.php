@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     @php
-    $lang = Session::get('language');
+    $lang = session('language');
 @endphp
 @if($lang)
     @if ($lang->is_rtl)
@@ -31,7 +31,7 @@
         --secondary-color1: {{ $systemSettings['theme_secondary_color_1'] ?? '#38a3a5' }};
         --primary-background-color: {{ $systemSettings['theme_primary_background_color'] ?? '#f2f5f7' }};
         --text--secondary-color: {{ $systemSettings['theme_text_secondary_color'] ?? '#5c788c' }};
-        
+
     }
     .modal .modal-dialog {
         margin-top: unset !important;
@@ -57,27 +57,27 @@
                         <div class="auth-form-light rounded-lg text-left p-5">
                             <div class="brand-logo text-center">
                                 @if ($schoolSettings['horizontal_logo'] ?? '')
-                                    <img class="img-fluid w-25" src="{{ $schoolSettings['horizontal_logo'] ?? '' }}" alt="logo">    
+                                    <img class="img-fluid w-25" src="{{ $schoolSettings['horizontal_logo'] ?? '' }}" alt="logo">
                                 @elseif($systemSettings['login_page_logo'] ?? $systemSettings['horizontal_logo'] ?? '')
                                     <img class="img-fluid w-25" src="{{ $systemSettings['login_page_logo'] ?? $systemSettings['horizontal_logo'] ?? '' }}" alt="logo">
                                 @else
                                     <img class="img-fluid w-25" src="{{ url('assets/horizontal-logo.svg') }}" alt="logo">
                                 @endif
-                                
+
                             </div>
                             <div class="mt-3">
-                                @if (\Session::has('success'))
+                                @if (session()->has('success'))
                                     <div class="alert alert-success text-center" role="alert">
-                                        {{ \Session::get('success') }}.
+                                        {{ session('success') }}.
                                     </div>
                                     <div class="alert alert-success text-center mt-2" role="alert">
                                         Please ensure you use your registered email for login, and your contact number as the password.
                                     </div>
                                 @endif
 
-                                @if (\Session::has('error'))
+                                @if (session()->has('error'))
                                     <div class="alert alert-danger text-center" role="alert">
-                                        {{ \Session::get('error') }}.
+                                        {{ session('error') }}.
                                     </div>
 
                                 @endif
@@ -104,24 +104,24 @@
                                     </div>
                                 </div>
 
-                                @if (Route::has('password.request'))
+                                {{-- @if (Route::has('password.request')) --}}
                                     <div class="my-2 d-flex justify-content-end align-items-center">
                                         <a class="auth-link text-blue" href="{{ route('password.request') }}">
                                             {{ __('forgot_password') }}
                                         </a>
                                     </div>
-                                @endif
+                                {{-- @endif --}}
                                 <div class="mt-3">
                                     <input type="submit" name="btnlogin" id="login_btn" value="{{ __('login') }}"
                                         class="btn btn-block btn-theme btn-lg font-weight-medium auth-form-btn rounded-lg" />
                                 </div>
                                 <div class="my-2 d-flex justify-content-end align-items-center">
                                     <a class="text-blue" href="#" data-bs-toggle="modal" data-bs-dismiss="offcanvas" data-bs-target="#staticBackdrop">
-                                        {{ __('New user Sign up to manage your school activities seamlessly') }}
+                                        {{ __('create_account') }}
                                     </a>
                                 </div>
                             </form>
-                            @include('registration_form')
+                            @include('student_signup_modal')
                             @if (env('DEMO_MODE'))
                                 <div class="row mt-3">
                                     <hr class="w-100">
@@ -263,10 +263,11 @@
     </script>
 </body>
 
-@if (Session::has('error'))
+@if (session()->has('error'))
+
     <script type='text/javascript'>
         $.toast({
-            text: '{{ Session::get('error') }}',
+            text: '{{ session('error') }}',
             showHideTransition: 'slide',
             icon: 'error',
             loaderBg: '#f2a654',

@@ -1,0 +1,346 @@
+{
+  "info": {
+    "name": "FAQ Management API",
+    "description": "Complete FAQ management system for university admission app. Includes public APIs for users and admin APIs for FAQ management.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345"
+  },
+  "item": [
+    {
+      "name": "Public APIs",
+      "item": [
+        {
+          "name": "Get All Active FAQs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/faqs",
+              "host": ["{{base_url}}"],
+              "path": ["faqs"]
+            },
+            "description": "Retrieve all active FAQs for display in the mobile app. No authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single FAQ",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/faqs/1",
+              "host": ["{{base_url}}"],
+              "path": ["faqs", "1"]
+            },
+            "description": "Retrieve details of a specific FAQ by ID. No authentication required."
+          },
+          "response": []
+        }
+      ],
+      "description": "Public APIs for app users to view FAQs"
+    },
+    {
+      "name": "Admin APIs",
+      "item": [
+        {
+          "name": "Get All FAQs (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/faqs?per_page=15&search=&status=",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs"],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Number of items per page"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search in question and answer"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Filter by status (1=Active, 0=Inactive)"
+                }
+              ]
+            },
+            "description": "Get all FAQs with pagination, search, and filtering. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get FAQ Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/statistics",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "statistics"]
+            },
+            "description": "Get statistics about FAQs (total, active, inactive counts)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single FAQ (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "1"]
+            },
+            "description": "Get a single FAQ by ID. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Create FAQ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What are the admission deadlines?\",\n  \"answer\": \"Admission deadlines vary by university and program. Typically, applications open in September and close in March for the following academic year. Check each university's specific deadlines on their profile page.\",\n  \"order\": 11,\n  \"status\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/faqs",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs"]
+            },
+            "description": "Create a new FAQ entry. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Update FAQ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I apply for university admission? (Updated)\",\n  \"answer\": \"To apply for university admission, first register an account on our platform. Once registered, browse through the list of universities, select your preferred institution, and fill out the detailed application form. You can save your progress at any time and submit when all required fields are completed.\",\n  \"order\": 1,\n  \"status\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "1"]
+            },
+            "description": "Update an existing FAQ. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle FAQ Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/1/toggle-status",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "1", "toggle-status"]
+            },
+            "description": "Toggle the status of an FAQ between active and inactive. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Reorder FAQs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"faqs\": [\n    {\n      \"id\": 1,\n      \"order\": 5\n    },\n    {\n      \"id\": 2,\n      \"order\": 1\n    },\n    {\n      \"id\": 3,\n      \"order\": 2\n    },\n    {\n      \"id\": 4,\n      \"order\": 3\n    },\n    {\n      \"id\": 5,\n      \"order\": 4\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/reorder",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "reorder"]
+            },
+            "description": "Update the display order of multiple FAQs at once. Useful for drag-and-drop implementations. Admin authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete FAQ",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/faqs/11",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "faqs", "11"]
+            },
+            "description": "Delete a FAQ permanently. Admin authentication required."
+          },
+          "response": []
+        }
+      ],
+      "description": "Admin APIs for complete FAQ management (CRUD operations)",
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{admin_token}}",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
+
+
+

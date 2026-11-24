@@ -79,6 +79,8 @@ class Kernel extends HttpKernel {
         'language'           => \App\Http\Middleware\LanguageManager::class,
         'checkStudent'       => \App\Http\Middleware\CheckStudent::class,
         'checkSchoolStatus'  => \App\Http\Middleware\CheckSchoolStatus::class,
-        'status'             => \App\Http\Middleware\Status::class
+        'status'             => \App\Http\Middleware\Status::class,
+        'university.auth'    => \App\Http\Middleware\UniversityAuth::class,
+        'student.portal'     => \App\Http\Middleware\EnsureAppStudentPortal::class,
     ];
 }

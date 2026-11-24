@@ -36,7 +36,7 @@ class RoleController extends Controller {
     }
 
 
-    public function index() {
+    public function index(Request $request) {
         ResponseService::noFeatureThenRedirect('Staff Management');
         ResponseService::noAnyPermissionThenRedirect(['role-list', 'role-create', 'role-edit', 'role-delete']);
         $roles = Role::orderBy('id', 'DESC')->get();

@@ -60,7 +60,7 @@
                                     <span class="input-group-addon input-group-append">
                                     </span>
                                 </div>
-                                @if (Auth::user()->school_id)
+                                @if (auth()->user()->school_id)
                                     <div class="form-group col-sm-12 col-md-4">
                                         <label for="salary">{{__('Salary') }} <span class="text-danger">*</span></label>
                                         <input type="number" name="salary" id="salary" placeholder="{{__('Salary')}}" class="form-control" min="0" value="0" required>
@@ -68,7 +68,7 @@
                                 @endif
 
 
-                                @if (!Auth::user()->school_id)
+                                @if (!auth()->user()->school_id)
                                     <div class="form-group col-sm-12 col-md-4">
                                         <label for="assign_schools">{{__('assign') }} {{ __('schools') }}</label>
                                         {!! Form::select('school_id[]', $schools, null, ['class' => 'form-control select2-dropdown select2-hidden-accessible','multiple']) !!}
@@ -92,7 +92,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                    @if(!empty(Auth::user()->school_id))
+                                    @if(!empty(auth()->user()->school_id))
                                         <span class="text-danger small">{{ __('Note').' :- '.__('Activating this will consider in your current subscription cycle') }}</span>
                                     @endif
                                 </div>
@@ -120,7 +120,7 @@
                                                 <label>{{ __('amount') }} <span class="text-danger">*</span></label>
                                                 <input type="text" id="allowance_amount" name="allowance[0][amount]" class="allowance_amount form-control" placeholder="{{ __('amount') }}" required>
                                             </div>
-                                            
+
                                             <div class="form-group col-xl-2" id="percentage_allowance_div" style="display: none">
                                                 <label>{{ __('percentage') }} <span class="text-danger">*</span></label>
                                                 <input type="text" id="allowance_percentage" name="allowance[0][percentage]" class="allowance_percentage form-control" placeholder="{{ __('percentage') }}" required>
@@ -130,10 +130,10 @@
                                                 <button type="button" class="btn btn-inverse-danger btn-icon remove-allowance-div" data-repeater-delete>
                                                     <i class="fa fa-times"></i>
                                                 </button>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="form-group col-sm-12 mt-4">
                                     <button type="button" class="btn btn-inverse-success add-allowance-div"
@@ -162,7 +162,7 @@
                                                 <label>{{ __('amount') }} <span class="text-danger">*</span></label>
                                                 <input type="text" id="deduction_amount" name="deduction[0][amount]" class="deduction_amount form-control" placeholder="{{ __('amount') }}" required>
                                             </div>
-                                            
+
                                             <div class="form-group col-xl-2" id="percentage_deduction_div" style="display: none">
                                                 <label>{{ __('percentage') }} <span class="text-danger">*</span></label>
                                                 <input type="text" id="deduction_percentage" name="deduction[0][percentage]" class="deduction_percentage form-control" placeholder="{{ __('percentage') }}" required>
@@ -172,10 +172,10 @@
                                                 <button type="button" class="btn btn-inverse-danger btn-icon remove-deduction-div" data-repeater-delete>
                                                     <i class="fa fa-times"></i>
                                                 </button>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                                 <div class="form-group col-sm-12 mt-4">
                                     <button type="button" class="btn btn-inverse-success add-deduction-div"
@@ -184,7 +184,7 @@
                                     </button>
                                 </div>
                                @endHasFeature
-                               
+
                             </div>
                             <input class="btn btn-theme float-right ml-3" id="create-btn" type="submit" value={{ __('submit') }}>
                                 <input class="btn btn-secondary float-right" type="reset" value={{ __('reset') }}>
@@ -227,7 +227,7 @@
                                 <th scope="col" data-field="mobile" data-sortable="true">{{ __('mobile') }}</th>
                                 <th scope="col" data-field="email">{{ __('email') }}</th>
                                 <th scope="col" data-field="staff.salary" data-visible="false">{{ __('Salary') }}</th>
-                                @if (!Auth::user()->school_id)
+                                @if (!auth()->user()->school_id)
                                     <th scope="col" data-field="support_school" data-formatter="schoolNameFormatter">{{ __('assign_schools') }}</th>
                                 @endif
                                 <th scope="col" data-field="created_at" data-formatter="dateTimeFormatter" data-sortable="true" data-visible="false">{{ __('created_at') }}</th>
@@ -296,8 +296,8 @@
                                         <span class="input-group-addon input-group-append">
                                         </span>
                                     </div>
-                                   
-                                    @if (Auth::user()->school_id)
+
+                                    @if (auth()->user()->school_id)
                                         <div class="form-group col-sm-12 col-md-4">
                                             <label for="edit_salary">{{__('Salary') }} <span class="text-danger">*</span></label>
                                             <input type="number" name="salary" id="edit_salary" placeholder="{{__('Salary')}}" class="form-control" min="0" required>
@@ -305,7 +305,7 @@
                                     @endif
 
 
-                                    @if (!Auth::user()->school_id)
+                                    @if (!auth()->user()->school_id)
                                         <div class="form-group col-sm-12 col-md-4">
                                             <label for="assign_schools">{{__('assign') }} {{ __('schools') }}</label>
                                             {!! Form::select('school_id[]', $schools, null, ['class' => 'form-control select2-dropdown select2-hidden-accessible','multiple','id' => 'edit_school_id']) !!}
@@ -430,7 +430,7 @@
                 const allowanceDiv = allowanceTypeElement.closest('.allowance_type_div');
                 const amountDiv = allowanceDiv.querySelector('#amount_allowance_div');
                 const percentageDiv = allowanceDiv.querySelector('#percentage_allowance_div');
-            
+
                 if (allowanceType === 'amount') {
                     percentageDiv.style.display = 'none';
                     amountDiv.style.display = 'block';
@@ -510,7 +510,7 @@
                 const deductionDiv = deductionTypeElement.closest('.deduction_type_div');
                 const amountDiv = deductionDiv.querySelector('#amount_deduction_div');
                 const percentageDiv = deductionDiv.querySelector('#percentage_deduction_div');
-            
+
                 if (deductionType === 'amount') {
                     percentageDiv.style.display = 'none';
                     amountDiv.style.display = 'block';
@@ -578,7 +578,7 @@
             });
         });
 
-        
+
 
     </script>
 @endsection

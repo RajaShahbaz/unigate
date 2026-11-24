@@ -10,8 +10,12 @@ use App\Models\Feature;
 use App\Models\FeatureSection;
 use App\Models\Gallery;
 use App\Models\Language;
+use App\Models\ApplicationPackage;
 use App\Models\Package;
 use App\Models\School;
+use App\Models\University;
+use App\Models\Interest;
+use App\Models\City;
 use App\Models\SchoolSetting;
 use App\Models\Slider;
 use App\Models\Stream;
@@ -48,7 +52,7 @@ class Controller extends BaseController {
         $this->cache = $cache;
     }
 
-    public function index() {
+    public function index(Request $request) {
 
         if (Auth::user()) {
             return redirect('dashboard');
@@ -69,10 +73,10 @@ class Controller extends BaseController {
                 $features = array_merge($features, $addons);
                 // Check website management feature
                 if (in_array('Website Management', $features)) {
-                    return $this->school_website($school);    
-                }    
+                    return $this->school_website($school);
+                }
             }
-            
+
         }
         // End school website
 
@@ -115,7 +119,85 @@ class Controller extends BaseController {
         if ($trail_package) {
             $trail_package = $trail_package->id;
         }
-        return view('home', compact('features', 'packages', 'settings', 'faqs', 'guidances', 'languages', 'schoolSettings', 'featureSections', 'about_us_lists', 'counter', 'trail_package'));
+
+        // Fetch data for new home page design
+        $universities = \App\Models\University::where('status', 1)
+            ->with(['city', 'interests'])
+            ->orderBy('ranking', 'desc')
+            ->take(20)
+            ->get();
+
+        $topUniversities = \App\Models\University::where('status', 1)
+            ->whereNotNull('ranking')
+            ->with('city') // Eager load city relationship to prevent N+1 queries
+            ->orderBy('ranking', 'asc')
+            ->take(8)
+            ->get();
+
+        $scholarships = \App\Models\Scholarship::where('status', 1)
+            ->with('university')
+            ->orderBy('created_at', 'desc')
+            ->take(12)
+            ->get();
+
+        // Mock blog posts (replace with actual Blog model when available)
+        $blogPosts = [
+            (object)[
+                'id' => 1,
+                'title' => 'How to write a perfect SOP for your dream university',
+                'image' => '',
+                'trending' => true,
+            ],
+            (object)[
+                'id' => 2,
+                'title' => 'Top 10 universities for MBA in Canada',
+                'image' => '',
+                'trending' => true,
+            ],
+            (object)[
+                'id' => 3,
+                'title' => 'Study in UK: A complete guide',
+                'image' => '',
+                'trending' => true,
+            ],
+        ];
+
+        // Mock testimonials (replace with actual data when available)
+        $testimonials = [
+            (object)[
+                'id' => 1,
+                'quote' => 'iSchoolConnect helped me find my dream university!',
+                'name' => 'Sarah Johnson',
+                'university' => 'Harvard University',
+                'program' => 'MBA',
+                'image' => asset('assets/home_page/images/testimonial1.jpg'),
+            ],
+            (object)[
+                'id' => 2,
+                'quote' => 'The application process was so smooth and easy.',
+                'name' => 'Michael Chen',
+                'university' => 'MIT',
+                'program' => 'Computer Science',
+                'image' => asset('assets/home_page/images/testimonial2.jpg'),
+            ],
+            (object)[
+                'id' => 3,
+                'quote' => 'I got a scholarship thanks to iSchoolConnect!',
+                'name' => 'Priya Sharma',
+                'university' => 'Stanford University',
+                'program' => 'Engineering',
+                'image' => asset('assets/home_page/images/testimonial3.jpg'),
+            ],
+        ];
+
+        // Fetch interests and cities for hero section dropdowns
+        $interests = \App\Models\Interest::where('status', 1)->orderBy('name')->get();
+        $cities = \App\Models\City::where('status', 1)->orderBy('name')->get();
+
+        // Degree levels (can be customized)
+        $degreeLevels = ['Bachelor\'s', 'Master\'s', 'PhD', 'Diploma', 'Certificate'];
+
+        return view('home', compact('features', 'packages', 'settings', 'faqs', 'guidances', 'languages', 'schoolSettings', 'featureSections', 'about_us_lists', 'counter', 'trail_package', 'universities', 'topUniversities', 'scholarships', 'blogPosts', 'testimonials', 'interests', 'cities', 'degreeLevels'));
     }
 
     public function school_website($school)
@@ -254,17 +336,99 @@ class Controller extends BaseController {
 
     public function about_us()
     {
-        return view('school-website.about_us');
+        $settings = app(CachingService::class)->getSystemSettings();
+        $about_us_lists = $settings['about_us_points'] ?? 'Affordable price, Easy to manage admin panel, Data Security';
+        $about_us_lists = explode(",", $about_us_lists);
+        return view('pages.about', compact('settings', 'about_us_lists'));
     }
 
     public function contact_us()
     {
-        return view('school-website.contact');
+        $settings = app(CachingService::class)->getSystemSettings();
+        return view('pages.contact', compact('settings'));
+    }
+
+    public function features()
+    {
+        $settings = app(CachingService::class)->getSystemSettings();
+        $features = Feature::activeFeatures()->get();
+        $featureSections = FeatureSection::with('feature_section_list')->orderBy('rank', 'ASC')->get();
+        return view('pages.features', compact('settings', 'features', 'featureSections'));
+    }
+
+    public function pricing()
+    {
+        $settings = app(CachingService::class)->getSystemSettings();
+        $applicationPackages = ApplicationPackage::query()
+            ->where('status', true)
+            ->orderBy('price')
+            ->orderBy('name')
+            ->get();
+        return view('pages.pricing', compact('settings', 'applicationPackages'));
+    }
+
+    public function universities(Request $request)
+    {
+        $settings = app(CachingService::class)->getSystemSettings();
+
+        // Get filter parameters
+        $degree = $request->query('degree');
+        $interestId = $request->query('interest');
+        $cityId = $request->query('city');
+
+        // Build query
+        $query = University::where('status', 1)
+            ->with(['city', 'interests:id,name']);
+
+        // Apply filters
+        if ($interestId) {
+            $query->whereHas('interests', function($q) use ($interestId) {
+                $q->where('interests.id', $interestId);
+            });
+        }
+
+        if ($cityId) {
+            $query->where('city_id', $cityId);
+        }
+
+        // Get all universities for filter dropdowns
+        $allUniversities = University::where('status', 1)->with('city')->get();
+        $allInterests = \App\Models\Interest::where('status', 1)->get();
+        $allCities = \App\Models\City::where('status', 1)->get();
+
+        // Get filtered universities
+        $universities = $query->orderBy('ranking', 'desc')->paginate(12);
+
+        return view('pages.universities', compact('settings', 'universities', 'allInterests', 'allCities', 'degree', 'interestId', 'cityId'));
+    }
+
+    public function universityDetail($id)
+    {
+        $university = \App\Models\University::with([
+            'city',
+            'interests:id,name',
+            'activeGalleries' => function($query) {
+                $query->limit(12);
+            },
+            'activeScholarships' => function($query) {
+                $query->orderBy('created_at', 'desc')->limit(10);
+            },
+            'activeAdmissionRequirements' => function($query) {
+                $query->with('interest')->orderBy('program_level', 'asc');
+            }
+        ])->findOrFail($id);
+
+        // Check if user has favorited this university
+        $is_favorite = false;
+        if (Auth::check()) {
+            $is_favorite = Auth::user()->favoriteUniversities()->where('university_id', $university->id)->exists();
+        }
+
+        $settings = app(CachingService::class)->getSystemSettings();
+        return view('pages.university-detail', compact('university', 'settings', 'is_favorite'));
     }
 
     public function contact_form(Request $request) {
-
-
         try {
             $admin_email = app(CachingService::class)->getSystemSettings('mail_username');
             $data = [
@@ -273,16 +437,16 @@ class Controller extends BaseController {
                 'subject'     => $request->subject,
                 'description' => $request->message,
                 'admin_email' => $admin_email,
-                'school_email' => $request->school_email
+                'school_email' => $request->school_email ?? $admin_email
             ];
 
             Mail::send('contact', $data, static function ($message) use ($data) {
-                $message->to($data['school_email'])->subject($data['subject']);
+                $message->to($data['admin_email'])->subject($data['subject']);
             });
 
-            return redirect()->to('school/contact-us')->with('success', "Message send successfully");
-        } catch (Throwable) {
-            return redirect()->to('school/contact-us')->with('error', "Apologies for the Inconvenience: Please Try Again Later");
+            return redirect()->route('contact-us')->with('success', "Message sent successfully");
+        } catch (Throwable $e) {
+            return redirect()->route('contact-us')->with('error', "Apologies for the inconvenience. Please try again later.");
         }
     }
 
@@ -337,7 +501,7 @@ class Controller extends BaseController {
     {
         return view('school-website.privacy_policy');
     }
-   
 
-    
+
+
 }

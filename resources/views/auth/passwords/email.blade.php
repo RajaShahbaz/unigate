@@ -50,7 +50,7 @@
     <!DOCTYPE html>
 <html lang="en">
     @php
-    $lang = Session::get('language');
+    $lang = session('language');
 @endphp
 @if($lang)
     @if ($lang->is_rtl)
@@ -134,10 +134,10 @@
 </script>
 </body>
 
-@if (Session::has('error'))
+@if (session()->has('error'))
     <script type='text/javascript'>
         $.toast({
-            text: '{{ Session::get('error') }}',
+            text: '{{ session('error') }}',
             showHideTransition: 'slide',
             icon: 'error',
             loaderBg: '#f2a654',

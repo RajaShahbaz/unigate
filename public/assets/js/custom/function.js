@@ -1028,6 +1028,107 @@ function package_graph(labels, data) {
     chart.render();
 }
 
+function applicationTrendChart(labels, applicationSeries, studentSeries) {
+    var target = document.querySelector("#applicationTimelineChart");
+    if (!target) {
+        return;
+    }
+
+    var options = {
+        series: [
+            {
+                name: window.trans ? window.trans['Applications'] || 'Applications' : 'Applications',
+                data: applicationSeries
+            },
+            {
+                name: window.trans ? window.trans['Students'] || 'Students' : 'Students',
+                data: studentSeries
+            }
+        ],
+        chart: {
+            height: 360,
+            type: "line",
+            toolbar: {
+                show: false
+            }
+        },
+        stroke: {
+            width: 4,
+            curve: 'smooth'
+        },
+        markers: {
+            size: 5
+        },
+        grid: {
+            strokeDashArray: 3
+        },
+        dataLabels: {
+            enabled: false
+        },
+        colors: ['#6366f1', '#0ea5e9'],
+        xaxis: {
+            categories: labels,
+            labels: {
+                rotate: -45
+            }
+        },
+        yaxis: {
+            min: 0,
+            forceNiceScale: true
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left'
+        }
+    };
+
+    $('#applicationTimelineChart').html('');
+    var chart = new ApexCharts(target, options);
+    chart.render();
+}
+
+function applicationStatusChart(labels, data) {
+    renderDonutChart('#applicationStatusChart', labels, data);
+}
+
+function renderDonutChart(targetSelector, labels, data, colors) {
+    var target = document.querySelector(targetSelector);
+    if (!target) {
+        return;
+    }
+
+    var palette = colors || ['#94a3b8', '#0ea5e9', '#f97316', '#6366f1', '#22c55e', '#14b8a6', '#e11d48', '#475569', '#4338ca'];
+
+    var options = {
+        series: data,
+        chart: {
+            type: 'donut',
+            height: 360
+        },
+        labels: labels,
+        legend: {
+            position: 'bottom'
+        },
+        dataLabels: {
+            formatter: function (val, opts) {
+                var total = opts.w.globals.seriesTotals.reduce(function (a, b) { return a + b; }, 0);
+                if (!total) {
+                    return '';
+                }
+                return val.toFixed(1) + '%';
+            }
+        },
+        stroke: {
+            width: 2
+        },
+        colors: palette
+    };
+
+    $(targetSelector).html('');
+    var chart = new ApexCharts(target, options);
+    chart.render();
+}
+
 
 
 function generateRandomColors(count) {

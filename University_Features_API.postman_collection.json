@@ -1,0 +1,561 @@
+{
+  "info": {
+    "name": "University Features API",
+    "description": "API Collection for University Gallery, Scholarships, and Admission Requirements",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gallery Management",
+      "item": [
+        {
+          "name": "Public - Get University Gallery",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/universities/:universityId/gallery?category=campus&featured=1&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "universities", ":universityId", "gallery"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "campus",
+                  "description": "Filter by category"
+                },
+                {
+                  "key": "featured",
+                  "value": "1",
+                  "description": "Get only featured items"
+                },
+                {
+                  "key": "per_page",
+                  "value": "10",
+                  "description": "Items per page"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "universityId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - List All Galleries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/university-galleries?university_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "university-galleries"],
+              "query": [
+                {
+                  "key": "university_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Create Gallery Item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "university_id",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "Main Campus Building",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Our state-of-the-art main campus building",
+                  "type": "text"
+                },
+                {
+                  "key": "image_path",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "image_type",
+                  "value": "image",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "campus",
+                  "type": "text"
+                },
+                {
+                  "key": "display_order",
+                  "value": "1",
+                  "type": "text"
+                },
+                {
+                  "key": "is_featured",
+                  "value": "true",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "true",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/university-galleries",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "university-galleries"]
+            }
+          }
+        },
+        {
+          "name": "Admin - Get Gallery Item",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/university-galleries/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "university-galleries", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Update Gallery Item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Campus Building\",\n  \"description\": \"Updated description\",\n  \"is_featured\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/university-galleries/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "university-galleries", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Delete Gallery Item",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/university-galleries/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "university-galleries", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scholarships Management",
+      "item": [
+        {
+          "name": "Public - Get University Scholarships",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/universities/:universityId/scholarships?accepting_applications=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "universities", ":universityId", "scholarships"],
+              "query": [
+                {
+                  "key": "accepting_applications",
+                  "value": "1",
+                  "description": "Only show scholarships accepting applications"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "universityId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - List All Scholarships",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/scholarships?university_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "scholarships"],
+              "query": [
+                {
+                  "key": "university_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Create Scholarship",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university_id\": 1,\n  \"name\": \"Merit Scholarship 2025\",\n  \"scholarship_type\": \"merit\",\n  \"description\": \"For students with excellent academic records\",\n  \"eligibility_criteria\": \"Minimum 3.5 GPA required\",\n  \"amount\": 50000.00,\n  \"amount_type\": \"fixed\",\n  \"total_slots\": 10,\n  \"available_slots\": 10,\n  \"application_start_date\": \"2025-01-01\",\n  \"application_end_date\": \"2025-06-30\",\n  \"required_documents\": \"Transcripts, recommendation letters\",\n  \"application_process\": \"Apply online through university portal\",\n  \"contact_email\": \"scholarships@university.edu\",\n  \"contact_phone\": \"+1234567890\",\n  \"renewable\": true,\n  \"renewable_years\": 4,\n  \"status\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/scholarships",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "scholarships"]
+            }
+          }
+        },
+        {
+          "name": "Admin - Get Scholarship",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/scholarships/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "scholarships", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Update Scholarship",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"available_slots\": 7,\n  \"status\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/scholarships/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "scholarships", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Delete Scholarship",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/scholarships/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "scholarships", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admission Requirements",
+      "item": [
+        {
+          "name": "Public - Get Admission Requirements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/universities/:universityId/admission-requirements?program_level=undergraduate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "universities", ":universityId", "admission-requirements"],
+              "query": [
+                {
+                  "key": "program_level",
+                  "value": "undergraduate",
+                  "description": "Filter by program level"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "universityId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Public - Get Program-Specific Requirements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/universities/:universityId/programs/:interestId/admission-requirements",
+              "host": ["{{base_url}}"],
+              "path": ["api", "universities", ":universityId", "programs", ":interestId", "admission-requirements"],
+              "variable": [
+                {
+                  "key": "universityId",
+                  "value": "1"
+                },
+                {
+                  "key": "interestId",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - List All Requirements",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/admission-requirements?university_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "admission-requirements"],
+              "query": [
+                {
+                  "key": "university_id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Create Admission Requirement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"university_id\": 1,\n  \"interest_id\": null,\n  \"program_level\": \"undergraduate\",\n  \"general_requirements\": \"High school diploma or equivalent\",\n  \"academic_requirements\": \"Minimum 60% in high school\",\n  \"minimum_percentage\": 60.00,\n  \"minimum_gpa\": 2.5,\n  \"entrance_tests\": \"SAT or ACT\",\n  \"minimum_test_score\": 1200,\n  \"required_documents\": \"Transcripts, ID, passport photos\",\n  \"language_requirements\": \"IELTS 6.0 or TOEFL 80\",\n  \"language_test_score\": 6.0,\n  \"application_deadline\": \"2025-07-31\",\n  \"application_fee\": 5000.00,\n  \"admission_process\": \"Online application followed by document verification\",\n  \"estimated_processing_days\": 30,\n  \"interview_required\": \"May be required for some programs\",\n  \"portfolio_required\": \"Required for arts and design programs\",\n  \"status\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/admission-requirements",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "admission-requirements"]
+            }
+          }
+        },
+        {
+          "name": "Admin - Get Admission Requirement",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/admission-requirements/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "admission-requirements", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Update Admission Requirement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"minimum_percentage\": 65.00,\n  \"application_deadline\": \"2025-08-15\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/admission-requirements/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "admission-requirements", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin - Delete Admission Requirement",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/admission-requirements/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "admission-requirements", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "your-auth-token-here",
+      "type": "string"
+    }
+  ]
+}
+

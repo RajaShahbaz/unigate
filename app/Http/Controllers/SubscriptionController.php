@@ -80,7 +80,7 @@ class SubscriptionController extends Controller
         $this->subscriptionService = $subscriptionService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         ResponseService::noRoleThenRedirect('School Admin');
         $today_date = Carbon::now()->format('Y-m-d');

@@ -745,6 +745,9 @@ window.schoolEvents = {
         $('#edit_school_address').val(row.address);
         $('#edit_school_tagline').val(row.tagline);
         $('#edit_domain').val(row.domain);
+        $('#edit_promo_code').val(row.promo_code);
+        $('#edit_discount_percentage').val(row.discount_percentage);
+        $('#edit_profit_percentage').val(row.profit_percentage);
         
         
         if (row.active_plan == '-') {

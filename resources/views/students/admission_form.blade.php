@@ -21,7 +21,7 @@
         {
             width: 100%;
         }
-        .school-info th, .school-info td 
+        .school-info th, .school-info td
         {
             padding: 2px 5px;
         }
@@ -51,12 +51,12 @@
             margin: 0rem 2rem;
         }
         .student-section {
-            
+
         }
         .section {
             margin-top: 1rem;
         }
-        
+
         .label {
             width: 4.5rem;
         }
@@ -66,8 +66,8 @@
         }
         .section .col-line {
             display: inline-block;
-            
-            
+
+
         }
         .line {
             border-bottom: 1px solid black;
@@ -101,7 +101,7 @@
         <div class="header">
             <table class="full-table-width school-info">
                 <tr>
-                    <th class="text-left school-name">{{ $schoolSettings['school_name'] ?? 'eSchool' }}</th>
+                    <th class="text-left school-name">{{ $schoolSettings['school_name'] ?? 'Unigate' }}</th>
                     <th class="text-right" rowspan="3">
                         @if ($settings['horizontal_logo'] ?? '')
                             <img height="50" src="{{ public_path('storage/') . $settings['horizontal_logo'] }}" alt="">
@@ -144,9 +144,9 @@
                         Guardian photo
                     </td>
                 </tr>
-                
+
             </table>
-            
+
 
             <div class="student-detail section-heading text-center">
                 STUDENT DETAILS
@@ -161,7 +161,7 @@
                         <td class="line"> </td>
 
                         <th class="text-right label">
-                            Last Name 
+                            Last Name
                         </th>
                         <td class="line"> </td>
                     </tr>

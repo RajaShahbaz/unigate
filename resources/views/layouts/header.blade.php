@@ -1,9 +1,9 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo" href="{{ URL::to('/') }}">
+        <a class="navbar-brand brand-logo" href="{{ url('/') }}">
             <img src="{{ asset('storage/' . ($schoolSettings['horizontal_logo'] ?? '')) }}" alt="logo" data-custom-image="{{$systemSettings['horizontal_logo'] ?? asset('/assets/horizontal-logo2.svg')}}" class="custom-default-image">
         </a>
-        <a class="navbar-brand brand-logo-mini" href="{{ URL::to('/') }}">
+        <a class="navbar-brand brand-logo-mini" href="{{ url('/') }}">
             <img src="{{ $schoolSettings['vertical_logo'] ?? '' }}" alt="logo" data-custom-image="{{$systemSettings['vertical_logo'] ?? asset('/assets/vertical-logo.svg')}}">
         </a>
     </div>
@@ -32,12 +32,12 @@
             @can('class-teacher')
                 <li class="nav-item">
                     {{-- TODO :: CLASS TEACHER CLASS NAME --}}
-                    {{-- @php $class_section = Auth::user()->teacher->class_section @endphp
+                    {{-- @php $class_section = auth()->user()->teacher->class_section @endphp
                     <div class="text-dark">{{__('Class').' : '.$class_section->class->name.' '.$class_section->section->name.' - '.$class_section->class->medium->name}}</div> --}}
                 </li>
             @endcan
 
-            @if (isset($sessionYear) && !Auth::user()->hasRole('Super Admin'))
+            @if (isset($sessionYear) && !auth()->user()->hasRole('Super Admin'))
                 <li class="d-none d-md-block d-sm-block nav-item">
                     <div class="text-dark">{{ __('session_years') . ' : '}} <span id="sessionYearNameHeader">{{$sessionYear->name}}</span><span id="semesterNameHeader">{{ (isset($semester) ? ', '.$semester->name : null)}}</span></div>
                 </li>
@@ -71,10 +71,10 @@
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="true">
                     <div class="nav-profile-img">
-                        <img src="{{ Auth::user()->image }}" alt="image">
+                        <img src="{{ auth()->user()->image }}" alt="image">
                     </div>
                     <div class="nav-profile-text">
-                        <p class="mb-1 text-black">{{ Auth::user()->first_name }}</p>
+                        <p class="mb-1 text-black">{{ auth()->user()->first_name }}</p>
                     </div>
                 </a>
                 <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">

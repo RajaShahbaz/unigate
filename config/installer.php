@@ -13,54 +13,54 @@ return [
         'php'       => [
             'name'    => 'PHP Version',
             'version' => '>= 8.0.0',
-            'check'   => fn() => version_compare(PHP_VERSION, '8', '>')
+            'check'   => 'php_version'
         ],
         'pdo'       => [
             'name'  => 'PDO',
-            'check' => fn() => extension_loaded('pdo_mysql')
+            'check' => 'pdo_mysql'
         ],
         'mbstring'  => [
             'name'  => 'Mbstring extension',
-            'check' => fn() => extension_loaded('mbstring')
+            'check' => 'mbstring'
         ],
         'fileinfo'  => [
             'name'  => 'Fileinfo extension',
-            'check' => fn() => extension_loaded('fileinfo')
+            'check' => 'fileinfo'
         ],
         'openssl'   => [
             'name'  => 'OpenSSL extension',
-            'check' => fn() => extension_loaded('openssl')
+            'check' => 'openssl'
         ],
         'tokenizer' => [
             'name'  => 'Tokenizer extension',
-            'check' => fn() => extension_loaded('tokenizer')
+            'check' => 'tokenizer'
         ],
         'json'      => [
             'name'  => 'Json extension',
-            'check' => fn() => extension_loaded('json')
+            'check' => 'json'
         ],
         'curl'      => [
             'name'  => 'Curl extension',
-            'check' => fn() => extension_loaded('curl')
+            'check' => 'curl'
         ],
         'zip'       => [
             'name'  => 'Zip extension',
-            'check' => fn() => extension_loaded('zip')
+            'check' => 'zip'
         ]
     ],
 
     'folders' => [
         'storage.framework' => [
-            'name'  => base_path() . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework',
-            'check' => fn() => (int)File::chmod(base_path() . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework') >= 755
+            'name'  => 'storage/framework',
+            'check' => 'storage_framework'
         ],
         'storage.logs'      => [
-            'name'  => base_path() . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs',
-            'check' => fn() => (int)File::chmod(base_path() . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs') >= 755
+            'name'  => 'storage/logs',
+            'check' => 'storage_logs'
         ],
         'storage.cache'     => [
-            'name'  => base_path() . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache',
-            'check' => fn() => (int)File::chmod(base_path() . DIRECTORY_SEPARATOR . 'bootstrap/cache') >= 755
+            'name'  => 'bootstrap/cache',
+            'check' => 'bootstrap_cache'
         ],
     ],
 

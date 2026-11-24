@@ -1,0 +1,550 @@
+{
+  "name": "University Application System API Examples",
+  "description": "Complete API request examples for the university application system",
+  "base_url": "http://your-domain.com/api",
+  "authentication": "Bearer Token (Sanctum)",
+  
+  "student_workflows": [
+    {
+      "name": "Complete Application Workflow",
+      "steps": [
+        {
+          "step": 1,
+          "description": "Get application form for Stanford University",
+          "method": "GET",
+          "endpoint": "/applications/universities/1/form",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Accept": "application/json"
+          }
+        },
+        {
+          "step": 2,
+          "description": "Create draft application with basic info",
+          "method": "POST",
+          "endpoint": "/applications",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "university_id": 1,
+            "interest_id": 3,
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "john.doe@email.com",
+            "phone": "+1234567890",
+            "date_of_birth": "2000-05-15",
+            "gender": "male",
+            "current_address": "123 Main Street, Apt 4B, New York, NY 10001",
+            "permanent_address": "456 Oak Avenue, Brooklyn, NY 11201",
+            "nationality": "American",
+            "previous_school": "New York High School",
+            "previous_degree": "High School Diploma",
+            "previous_gpa": 3.85,
+            "graduation_year": 2018,
+            "application_message": "I am passionate about computer science and artificial intelligence. Throughout my academic career, I have consistently demonstrated..."
+          }
+        },
+        {
+          "step": 3,
+          "description": "Upload documents (use multipart/form-data)",
+          "method": "PUT",
+          "endpoint": "/applications/1",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Content-Type": "multipart/form-data"
+          },
+          "body_note": "Use form-data with files",
+          "form_data": {
+            "transcript_file": "[FILE]",
+            "id_document_file": "[FILE]",
+            "photo_file": "[FILE]",
+            "recommendation_letter_file": "[FILE]"
+          }
+        },
+        {
+          "step": 4,
+          "description": "Add custom field responses",
+          "method": "PUT",
+          "endpoint": "/applications/1",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "custom_fields": {
+              "1": "https://myportfolio.johndoe.com",
+              "2": "I chose Computer Science because of my passion for problem-solving and innovation...",
+              "3": "Merit-based"
+            }
+          }
+        },
+        {
+          "step": 5,
+          "description": "Submit application",
+          "method": "POST",
+          "endpoint": "/applications/1/submit",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Accept": "application/json"
+          }
+        },
+        {
+          "step": 6,
+          "description": "View application status",
+          "method": "GET",
+          "endpoint": "/applications/1",
+          "headers": {
+            "Authorization": "Bearer {student_token}",
+            "Accept": "application/json"
+          }
+        }
+      ]
+    }
+  ],
+
+  "student_api_examples": [
+    {
+      "name": "Get My Applications",
+      "method": "GET",
+      "endpoint": "/applications/my-applications?status=submitted&per_page=20",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Get Application Form",
+      "method": "GET",
+      "endpoint": "/applications/universities/1/form",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Create Application Draft",
+      "method": "POST",
+      "endpoint": "/applications",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "university_id": 1,
+        "interest_id": 5,
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "email": "jane.smith@email.com",
+        "phone": "+1987654321",
+        "date_of_birth": "1999-08-20",
+        "gender": "female",
+        "current_address": "789 Park Avenue, Manhattan, NY 10021",
+        "nationality": "American",
+        "previous_gpa": 3.9,
+        "graduation_year": 2017
+      }
+    },
+    {
+      "name": "Update Draft Application",
+      "method": "PUT",
+      "endpoint": "/applications/1",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "previous_gpa": 4.0,
+        "application_message": "Updated personal statement..."
+      }
+    },
+    {
+      "name": "Withdraw Application",
+      "method": "POST",
+      "endpoint": "/applications/1/withdraw",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Delete Draft Application",
+      "method": "DELETE",
+      "endpoint": "/applications/1",
+      "headers": {
+        "Authorization": "Bearer {student_token}",
+        "Accept": "application/json"
+      }
+    }
+  ],
+
+  "admin_workflows": [
+    {
+      "name": "Setup Custom Application Fields",
+      "steps": [
+        {
+          "step": 1,
+          "description": "Create Essay Field",
+          "method": "POST",
+          "endpoint": "/admin/universities/1/fields",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "field_name": "motivation_essay",
+            "field_label": "Why This University?",
+            "field_description": "Please write a 500-word essay explaining your motivation for choosing our university and this specific program.",
+            "field_type": "textarea",
+            "is_required": true,
+            "sort_order": 0
+          }
+        },
+        {
+          "step": 2,
+          "description": "Create Portfolio Upload Field",
+          "method": "POST",
+          "endpoint": "/admin/universities/1/fields",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "field_name": "portfolio",
+            "field_label": "Design Portfolio",
+            "field_description": "Upload your design portfolio (PDF format only)",
+            "field_type": "file",
+            "file_types": "pdf",
+            "max_file_size": 10240,
+            "is_required": true,
+            "sort_order": 1
+          }
+        },
+        {
+          "step": 3,
+          "description": "Create Scholarship Interest Field",
+          "method": "POST",
+          "endpoint": "/admin/universities/1/fields",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "field_name": "scholarship_type",
+            "field_label": "Scholarship Interest",
+            "field_description": "Select the type of scholarship you're interested in",
+            "field_type": "select",
+            "field_options": ["Merit-based", "Need-based", "Athletic", "Arts", "Not interested"],
+            "is_required": false,
+            "sort_order": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Review Applications Workflow",
+      "steps": [
+        {
+          "step": 1,
+          "description": "Get all submitted applications",
+          "method": "GET",
+          "endpoint": "/admin/applications?university_id=1&status=submitted&per_page=50",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Accept": "application/json"
+          }
+        },
+        {
+          "step": 2,
+          "description": "View detailed application",
+          "method": "GET",
+          "endpoint": "/admin/applications/25",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Accept": "application/json"
+          }
+        },
+        {
+          "step": 3,
+          "description": "Add review notes",
+          "method": "POST",
+          "endpoint": "/admin/applications/25/notes",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "admin_notes": "Strong academic background. GPA 3.9. Excellent recommendation letters. Portfolio shows creativity and technical skills. Recommend for shortlist."
+          }
+        },
+        {
+          "step": 4,
+          "description": "Update application status to shortlisted",
+          "method": "POST",
+          "endpoint": "/admin/applications/25/status",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "status": "shortlisted",
+            "admin_notes": "Candidate meets all requirements. Schedule for interview."
+          }
+        },
+        {
+          "step": 5,
+          "description": "Bulk update multiple applications",
+          "method": "POST",
+          "endpoint": "/admin/applications/bulk-update-status",
+          "headers": {
+            "Authorization": "Bearer {admin_token}",
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "application_ids": [25, 26, 27, 28, 29],
+            "status": "interview_scheduled",
+            "admin_notes": "Batch 1 - Interviews scheduled for next week"
+          }
+        }
+      ]
+    }
+  ],
+
+  "admin_api_examples": [
+    {
+      "name": "Get All Applications with Filters",
+      "method": "GET",
+      "endpoint": "/admin/applications?university_id=1&status=under_review&interest_id=3&date_from=2025-01-01&search=john",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Get Application Statistics",
+      "method": "GET",
+      "endpoint": "/admin/applications/statistics?university_id=1",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Accept Application",
+      "method": "POST",
+      "endpoint": "/admin/applications/30/status",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "status": "accepted",
+        "admin_notes": "Congratulations! Application approved. Welcome email sent."
+      }
+    },
+    {
+      "name": "Reject Application",
+      "method": "POST",
+      "endpoint": "/admin/applications/31/status",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "status": "rejected",
+        "rejection_reason": "GPA below minimum requirement of 3.0",
+        "admin_notes": "Does not meet academic standards"
+      }
+    },
+    {
+      "name": "Get Custom Fields for University",
+      "method": "GET",
+      "endpoint": "/admin/universities/1/fields",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Update Custom Field",
+      "method": "PUT",
+      "endpoint": "/admin/universities/1/fields/5",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "field_label": "Updated Label",
+        "field_description": "Updated description with more details",
+        "is_required": false
+      }
+    },
+    {
+      "name": "Reorder Custom Fields",
+      "method": "POST",
+      "endpoint": "/admin/universities/1/fields/reorder",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "field_orders": [
+          {"id": 3, "sort_order": 0},
+          {"id": 1, "sort_order": 1},
+          {"id": 2, "sort_order": 2}
+        ]
+      }
+    },
+    {
+      "name": "Toggle Field Status",
+      "method": "POST",
+      "endpoint": "/admin/universities/1/fields/5/toggle-status",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Accept": "application/json"
+      }
+    },
+    {
+      "name": "Delete Custom Field",
+      "method": "DELETE",
+      "endpoint": "/admin/universities/1/fields/5",
+      "headers": {
+        "Authorization": "Bearer {admin_token}",
+        "Accept": "application/json"
+      }
+    }
+  ],
+
+  "custom_field_types_examples": [
+    {
+      "type": "text",
+      "example": {
+        "field_name": "linkedin_profile",
+        "field_label": "LinkedIn Profile",
+        "field_type": "text",
+        "is_required": false
+      }
+    },
+    {
+      "type": "textarea",
+      "example": {
+        "field_name": "career_goals",
+        "field_label": "Career Goals",
+        "field_description": "Describe your career goals (max 1000 words)",
+        "field_type": "textarea",
+        "is_required": true
+      }
+    },
+    {
+      "type": "number",
+      "example": {
+        "field_name": "sat_score",
+        "field_label": "SAT Score",
+        "field_type": "number",
+        "is_required": false
+      }
+    },
+    {
+      "type": "date",
+      "example": {
+        "field_name": "preferred_start_date",
+        "field_label": "Preferred Start Date",
+        "field_type": "date",
+        "is_required": true
+      }
+    },
+    {
+      "type": "file",
+      "example": {
+        "field_name": "research_paper",
+        "field_label": "Research Paper",
+        "field_description": "Upload your best research paper",
+        "field_type": "file",
+        "file_types": "pdf,doc,docx",
+        "max_file_size": 5120,
+        "is_required": false
+      }
+    },
+    {
+      "type": "select",
+      "example": {
+        "field_name": "preferred_campus",
+        "field_label": "Preferred Campus",
+        "field_type": "select",
+        "field_options": ["Main Campus", "North Campus", "South Campus", "Online"],
+        "is_required": true
+      }
+    },
+    {
+      "type": "checkbox",
+      "example": {
+        "field_name": "extracurricular_activities",
+        "field_label": "Extracurricular Activities",
+        "field_type": "checkbox",
+        "field_options": ["Sports", "Music", "Drama", "Debate", "Community Service"],
+        "is_required": false
+      }
+    },
+    {
+      "type": "radio",
+      "example": {
+        "field_name": "housing_preference",
+        "field_label": "Housing Preference",
+        "field_type": "radio",
+        "field_options": ["On-campus dormitory", "Off-campus housing", "Commute from home"],
+        "is_required": true
+      }
+    },
+    {
+      "type": "email",
+      "example": {
+        "field_name": "alternate_email",
+        "field_label": "Alternate Email",
+        "field_type": "email",
+        "is_required": false
+      }
+    },
+    {
+      "type": "url",
+      "example": {
+        "field_name": "github_profile",
+        "field_label": "GitHub Profile",
+        "field_description": "For Computer Science applicants",
+        "field_type": "url",
+        "is_required": false
+      }
+    }
+  ],
+
+  "testing_checklist": [
+    "✓ Create application draft",
+    "✓ Upload documents to draft",
+    "✓ Add custom field responses",
+    "✓ Submit application",
+    "✓ View application status",
+    "✓ Withdraw application (if needed)",
+    "✓ Admin view all applications",
+    "✓ Admin filter applications",
+    "✓ Admin update application status",
+    "✓ Admin add notes",
+    "✓ Admin bulk update",
+    "✓ Admin create custom fields",
+    "✓ Admin reorder fields",
+    "✓ Admin view statistics"
+  ],
+
+  "notes": [
+    "All endpoints require authentication via Sanctum token",
+    "File uploads must use multipart/form-data content type",
+    "Application number is auto-generated (APP{YEAR}{NUMBER})",
+    "Draft applications can be edited and deleted",
+    "Submitted applications cannot be edited by students",
+    "Only specific statuses can be withdrawn",
+    "Custom fields are university-specific",
+    "Field types determine validation rules",
+    "Files are stored in public storage disk",
+    "Use soft deletes for data retention"
+  ]
+}
+

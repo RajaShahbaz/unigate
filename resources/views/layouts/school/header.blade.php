@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="loginWrapper">
-                <button class="commonBtn redirect-login">Login <i class="fa-regular fa-user"></i></button>
+                <button class="btn btn-secondary commonBtn redirect-login ">Login <i class="fa-regular fa-user"></i></button>
             </div>
         </div>
 
@@ -94,7 +94,7 @@
                         <a href="{{ url('school/contact-us') }}">Contact Us</a>
                     </li>
                     <div class="loginWrapper">
-                        <button class="commonBtn redirect-login">Login <i class="fa-regular fa-user"></i></button>
+                        <button class="btn btn-secondary commonBtn redirect-login ">Login <i class="fa-regular fa-user"></i></button>
                     </div>
                 </ul>
             </div>

@@ -36,7 +36,7 @@ class PackageController extends Controller {
     }
 
 
-    public function index() {
+    public function index(Request $request) {
         ResponseService::noPermissionThenRedirect('package-list');
         return view('package.index');
     }

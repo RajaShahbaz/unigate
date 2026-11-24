@@ -64,9 +64,9 @@
     @endforeach
     @endif
 
-    @if (Session::has('success'))
-    $.toast({
-        text: '{{ Session::get('success') }}',
+    @if (session()->has('success'))
+        $.toast({
+        text: '{{ session('success') }}',
         showHideTransition: 'slide',
         icon: 'success',
         loaderBg: '#f96868',
@@ -74,9 +74,9 @@
     });
     @endif
 
-    @if (Session::has('error'))
-    $.toast({
-        text: '{{ Session::get('error') }}',
+    @if (session()->has('error'))
+        $.toast({
+        text: '{{ session('error') }}',
         showHideTransition: 'slide',
         icon: 'error',
         loaderBg: '#f2a654',
@@ -110,9 +110,9 @@
         toast_position = 'top-right';
     }
 
-    
+
     setTimeout(() => {
-        
+
         $(document).ready(function() {
             var targetNode = document.querySelector('thead');
 
@@ -134,7 +134,7 @@
         });
 
     }, 500);
-    
+
 
     // razorpay-payment-button
     setTimeout(() => {
@@ -183,7 +183,7 @@
                         subscription_id : $('.subscription_id').val(),
                         feature_id : $('.feature_id').val(),
                         end_date : $('.end_date').val(),
-                        
+
                     },
                     success: function (response) {
                         if (response.data) {
@@ -193,7 +193,7 @@
                                 "key": "{{ $paymentConfiguration->api_key ?? '' }}", // Enter the Key ID generated from the Dashboard
                                 "amount": $('.bill_amount').val() * 100, // Amount is in currency subunits. Default currency is INR. Hence, 100 refers to 1 INR
                                 "currency": "{{ $system_settings['currency_code'] ?? 'INR' }}",
-                                "name": "{{ $system_settings['system_name'] ?? 'eSchool-Saas' }}",
+                                "name": "{{ $system_settings['system_name'] ?? 'Unigate' }}",
                                 "description": "Razorpay",
                                 "order_id": order_id,
                                 "handler": function(response) {
@@ -217,8 +217,8 @@
                 });
                 e.preventDefault();
             }
-        }, 100); 
-        
+        }, 100);
+
     });
 
 </script>

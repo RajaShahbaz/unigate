@@ -68,6 +68,18 @@
                                         <label for="assign_package">{{ __('assign_package')}} </label>
                                         {!! Form::select('assign_package', $packages, null, ['class' => 'form-control', 'placeholder' => __('select_package')]) !!}
                                     </div>
+                                    <div class="form-group col-sm-12 col-md-3">
+                                        <label for="promo_code">{{ __('promo_code') }}</label>
+                                        <input type="text" name="promo_code" id="promo_code" class="form-control" placeholder="{{ __('promo_code') }}">
+                                    </div>
+                                    <div class="form-group col-sm-12 col-md-3">
+                                        <label for="discount_percentage">{{ __('discount') }} %</label>
+                                        <input type="number" step="0.01" min="0" max="100" name="discount_percentage" id="discount_percentage" class="form-control" placeholder="0">
+                                    </div>
+                                    <div class="form-group col-sm-12 col-md-3">
+                                        <label for="profit_percentage">{{ __('profit') }} %</label>
+                                        <input type="number" step="0.01" min="0" max="100" name="profit_percentage" id="profit_percentage" class="form-control" placeholder="0">
+                                    </div>
                                 </div>
                             </div>
                             <hr>
@@ -153,6 +165,9 @@
                                 <th scope="col" data-field="user" data-formatter="schoolAdminFormatter">{{ __('admin') }}</th>
                                 <th scope="col" data-field="active_plan">{{ __('active_plan') }}</th>
                                 <th scope="col" data-field="status" data-formatter="activeStatusFormatter">{{ __('status') }}</th>
+                                <th scope="col" data-field="promo_code">{{ __('promo_code') }}</th>
+                                <th scope="col" data-field="discount_percentage">{{ __('discount') }} %</th>
+                                <th scope="col" data-field="profit_percentage">{{ __('profit') }} %</th>
                                 <th scope="col" data-field="operate" data-formatter="actionColumnFormatter" data-events="schoolEvents" data-escape="false">{{ __('action') }}</th>
                             </tr>
                             </thead>
@@ -233,6 +248,18 @@
                                 {{ __('note') }}: {{ __('if_the_school_does_not_currently_have_a_plan_please_assign_from_here_If_there_is_already_an_active_plan_proceed_to_the_subscription_page_to_make_any_necessary_changes') }}.
                             </span>
 
+                        </div>
+                        <div class="form-group col-sm-12 col-md-3">
+                            <label for="edit_promo_code">{{ __('promo_code') }}</label>
+                            <input type="text" class="form-control" id="edit_promo_code" name="edit_promo_code" placeholder="{{ __('promo_code') }}">
+                        </div>
+                        <div class="form-group col-sm-12 col-md-3">
+                            <label for="edit_discount_percentage">{{ __('discount') }} %</label>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control" id="edit_discount_percentage" name="edit_discount_percentage" placeholder="0">
+                        </div>
+                        <div class="form-group col-sm-12 col-md-3">
+                            <label for="edit_profit_percentage">{{ __('profit') }} %</label>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control" id="edit_profit_percentage" name="edit_profit_percentage" placeholder="0">
                         </div>
                     </div>
                     </div>

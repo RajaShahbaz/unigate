@@ -19,10 +19,10 @@
             <div class="col-sm-6 col-md-6 col-lg-2">
                 <div class="linksWrapper usefulLinksDiv">
                     <span class="title">{{ __('links') }}</span>
-                    <span><a href="#home">{{ __('home') }}</a></span>
-                    <span><a href="#features">{{ __('features') }}</a></span>
-                    <span><a href="#pricing">{{ __('pricing') }}</a></span>
-                    <span><a href="#faq">{{ __('faqs') }}</a></span>
+                    <span><a href="{{ url('/') }}#home">{{ __('home') }}</a></span>
+                    <span><a href="{{ url('/features') }}">{{ __('features') }}</a></span>
+                    <span><a href="{{ url('/pricing') }}">{{ __('pricing') }}</a></span>
+                    <span><a href="{{ url('/') }}#faq">{{ __('faqs') }}</a></span>
                 </div>
             </div>
 
@@ -30,13 +30,23 @@
                 <div class="linksWrapper">
                     <span class="title">{{ __('info') }}</span>
                     <span>
-                        <a href="#about-us">
+                        <a href="{{ url('/about-us') }}">
                             {{ __('about_us') }}
                         </a>
                     </span>
                     <span>
-                        <a href="#contact-us">
+                        <a href="{{ url('/contact-us') }}">
                             {{ __('contact') }}
+                        </a>
+                    </span>
+                    <span>
+                        <a href="{{ route('app.privacy-policy') }}">
+                            {{ __('Privacy Policy') }}
+                        </a>
+                    </span>
+                    <span>
+                        <a href="{{route('app.terms-conditions')}}">
+                            {{ __('Terms & Conditions') }}
                         </a>
                     </span>
                 </div>
@@ -57,7 +67,7 @@
                                             {{ __('facebook') }}
                                         </span>
                                     </a>
-                                </span>    
+                                </span>
                             @endif
 
                             @if (isset($settings['instagram']))
@@ -70,7 +80,7 @@
                                             {{ __('instagram') }}
                                         </span>
                                     </a>
-                                </span>    
+                                </span>
                             @endif
 
                             @if (isset($settings['linkedin']))
@@ -83,7 +93,7 @@
                                             {{ __('linkedin') }}
                                         </span>
                                     </a>
-                                </span>    
+                                </span>
                             @endif
                         </div>
                     </div>
@@ -93,7 +103,7 @@
 
             <div class="col-12 copyright">
                 @if (isset($settings['footer_text']) && $settings['footer_text'])
-                    <span class="copyright footer-text"><span class="me-1">&copy; {{ date('Y') }}</span> {!! $settings['footer_text'] !!}</span>
+                    <span class="copyright footer-text"><span class="me-1">&copy; {{ date('Y') }}</span> Reina Teach. All Rights Reserved</span>
                 @endif
             </div>
 

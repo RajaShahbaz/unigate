@@ -112,7 +112,7 @@ return [
         'theme' => 'default',
 
         'paths' => [
-            resource_path('views/vendor/mail'),
+            base_path('resources/views/vendor/mail'),
         ],
     ],
 ];

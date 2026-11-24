@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Language;
+use App\Models\Payment;
 use App\Models\School;
 use App\Models\SchoolSetting;
+use App\Models\Students;
 use App\Models\User;
 use App\Repositories\Guidance\GuidanceInterface;
 use App\Repositories\Package\PackageInterface;
@@ -76,7 +78,10 @@ class SchoolController extends Controller {
             'admin_contact'        => 'required|digits_between:1,16',
             'admin_email'          => 'required|unique:users,email',
             'admin_image'          => 'required|mimes:jpg,jpeg,png,svg,svg+xml|max:2048',
-            'domain'               => 'nullable|unique:schools,domain'
+            'domain'               => 'nullable|unique:schools,domain',
+            'promo_code'           => 'nullable|string|max:50|unique:schools,promo_code',
+            'discount_percentage'  => 'nullable|numeric|min:0|max:100',
+            'profit_percentage'    => 'nullable|numeric|min:0|max:100',
 
         ]);
         if ($validator->fails()) {
@@ -92,7 +97,10 @@ class SchoolController extends Controller {
                 'support_phone' => $request->school_support_phone,
                 'tagline'       => $request->school_tagline,
                 'logo'          => $request->file('school_image'),
-                'domain'        => $request->domain
+                'domain'        => $request->domain,
+                'promo_code'    => $request->promo_code,
+                'discount_percentage' => $request->discount_percentage ?? 0,
+                'profit_percentage'   => $request->profit_percentage ?? 0,
             );
             // Call store function of Schools Repository
             $schoolData = $this->schoolsRepository->create($school_data);
@@ -249,7 +257,8 @@ class SchoolController extends Controller {
                 $operate = BootstrapTableService::menuRestoreButton('restore',route('schools.restore', $row->id));
                 $operate .= BootstrapTableService::menuTrashButton('delete',route('schools.trash', $row->id));
             } else {
-                $operate = BootstrapTableService::menuButton('change_admin',"#",['update-admin-data'],['data-toggle' => "modal", 'data-target' => "#editAdminModal"]);
+                $operate = BootstrapTableService::menuButton('details', route('schools.details', $row->id));
+                $operate .= BootstrapTableService::menuButton('change_admin',"#",['update-admin-data'],['data-toggle' => "modal", 'data-target' => "#editAdminModal"]);
 
                 if ($row->status == 0) {
                     $operate .= BootstrapTableService::menuButton('activate_school',"#",["change-school-status"],['data-id' => $row->id]);
@@ -291,7 +300,10 @@ class SchoolController extends Controller {
             'edit_school_tagline'       => 'required',
             'edit_school_address'       => 'required',
             'edit_school_image'         => 'nullable|mimes:jpg,jpeg,png,svg,svg+xml|max:2048',
-            'edit_domain'               => 'nullable|unique:schools,domain,'.$id
+            'edit_domain'               => 'nullable|unique:schools,domain,'.$id,
+            'edit_promo_code'           => 'nullable|string|max:50|unique:schools,promo_code,'.$id,
+            'edit_discount_percentage'  => 'nullable|numeric|min:0|max:100',
+            'edit_profit_percentage'    => 'nullable|numeric|min:0|max:100',
         ]);
         if ($validator->fails()) {
             ResponseService::validationError($validator->errors()->first());
@@ -303,7 +315,10 @@ class SchoolController extends Controller {
                 'support_email' => $request->edit_school_support_email,
                 'support_phone' => $request->edit_school_support_phone,
                 'tagline'       => $request->edit_school_tagline,
-                'domain'        => $request->edit_domain
+                'domain'        => $request->edit_domain,
+                'promo_code'    => $request->edit_promo_code,
+                'discount_percentage' => $request->edit_discount_percentage ?? 0,
+                'profit_percentage'   => $request->edit_profit_percentage ?? 0,
             );
 
             if ($request->hasFile('edit_school_image')) {
@@ -346,6 +361,24 @@ class SchoolController extends Controller {
                 [
                     'name'      => 'domain',
                     'data'      => $request->edit_domain,
+                    'type'      => 'string',
+                    'school_id' => $request->edit_id
+                ],
+                [
+                    'name'      => 'promo_code',
+                    'data'      => $request->edit_promo_code,
+                    'type'      => 'string',
+                    'school_id' => $request->edit_id
+                ],
+                [
+                    'name'      => 'discount_percentage',
+                    'data'      => $request->edit_discount_percentage ?? 0,
+                    'type'      => 'string',
+                    'school_id' => $request->edit_id
+                ],
+                [
+                    'name'      => 'profit_percentage',
+                    'data'      => $request->edit_profit_percentage ?? 0,
                     'type'      => 'string',
                     'school_id' => $request->edit_id
                 ]);
@@ -509,6 +542,36 @@ class SchoolController extends Controller {
             ];
         }
         return response()->json($response);
+    }
+
+    public function details($id)
+    {
+        ResponseService::noPermissionThenRedirect('schools-list');
+
+        $school = School::with('user')->findOrFail($id);
+
+        $students = Students::with('user:id,first_name,last_name,email,mobile')
+            ->where('school_id', $id)
+            ->orderByDesc('id')
+            ->paginate(15, ['*'], 'students_page');
+
+        $payments = Payment::with('payer:id,first_name,last_name,email,mobile')
+            ->where('school_id', $id)
+            ->orderByDesc('id')
+            ->paginate(15, ['*'], 'payments_page');
+
+        $successfulPayments = Payment::where('school_id', $id)
+            ->whereIn('transaction_status', ['999', '000']);
+
+        $summary = [
+            'total_students' => Students::where('school_id', $id)->count(),
+            'total_payments' => $payments->total(),
+            'total_paid_amount' => (float) $successfulPayments->sum('paid_amount'),
+            'total_discount' => (float) Payment::where('school_id', $id)->sum('discount_amount'),
+            'total_profit' => (float) Payment::where('school_id', $id)->sum('profit_amount'),
+        ];
+
+        return view('schools.details', compact('school', 'students', 'payments', 'summary'));
     }
 
     public function registrationForm()

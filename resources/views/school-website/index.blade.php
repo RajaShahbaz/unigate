@@ -11,13 +11,13 @@
                     <div class="item">
                         <img src="{{ $slider->image }}" alt="" class="swiperImage" />
                     </div>
-                @endforeach    
+                @endforeach
             @else
                 @foreach ($sliders as $slider)
                     <div class="item">
                         <img src="{{ $slider }}" alt="" class="swiperImage" />
                     </div>
-                @endforeach  
+                @endforeach
             @endif
         </div>
     </section>
@@ -36,7 +36,7 @@
                             <span class="commonTag"> {{ $schoolSettings['education_program_title'] ?? 'Educational Programs' }}  </span>
                             <span class="commonTitle">
                                 {{ $schoolSettings['education_program_heading'] ?? 'Educational Programs for every Stage' }}
-                                
+
                             </span>
 
                             <span class="commonDesc">
@@ -85,7 +85,7 @@
         </section>
         <!-- programs ends here  -->
     @endif
-    
+
     {{-- Annoucenment --}}
     @if (isset($schoolSettings['announcement_status']) && $schoolSettings['announcement_status'])
         <section class="events annaouncementSection commonMT commonWaveSect">
@@ -209,7 +209,7 @@
         </section>
         <!-- events ends here  -->
 
-        
+
     @endif
 
     {{-- Counter --}}
@@ -275,8 +275,8 @@
                                 </div>
                                 </div>
                             </div>
-                            
-                            
+
+
                             <div class="col-12 col-sm-6 col-md-6 col-lg-3">
                                 <div class="cardBg">
                                 <div class="card">
@@ -291,7 +291,7 @@
                                 </div>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="sideImgs">
                             <img src="{{ asset('assets/school/images/pen.png') }}" class="colorImg" alt="colorImg" />
@@ -305,7 +305,7 @@
 
     {{-- Expert Teachers --}}
     @include('school-website.our_teacher_section')
-    
+
     {{-- FAQs --}}
     @if (isset($schoolSettings['faqs_status']) && $schoolSettings['faqs_status'] && count($faqs))
         <section class="faqs commonMT" id="faqs">
@@ -316,7 +316,7 @@
                             <span class="commonTag"> {{ $schoolSettings['faqs_section'] ?? 'Frequently Asked Questions' }}
                             </span>
                             <span class="commonTitle">
-                                {{ $schoolSettings['faqs_title'] ?? 'Know More About eSchool' }}
+                                {{ $schoolSettings['faqs_title'] ?? 'Know More About Unigate' }}
 
                             </span>
 
@@ -362,7 +362,7 @@
 
     {{-- Gallery --}}
     @include('school-website.gallery_section')
-    
+
 @endsection
 @section('script')
     <script>
@@ -375,7 +375,7 @@
                     $('#description').html(description);
                     $('#date').html(date);
                 }, 200);
-                
+
             }
 
             // Add click event to each card
@@ -386,7 +386,7 @@
                     const classes = card.querySelector('.eventClasses').textContent;
                     const description = card.querySelector('.eventDesc').textContent;
                     openModal(title, date, classes, description);
-                    
+
                 });
             });
 

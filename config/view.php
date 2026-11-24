@@ -14,7 +14,7 @@ return [
     */
 
     'paths' => [
-        resource_path('views'),
+        base_path('resources/views'),
     ],
 
     /*
@@ -30,7 +30,7 @@ return [
 
     'compiled' => env(
         'VIEW_COMPILED_PATH',
-        realpath(storage_path('framework/views'))
+        base_path('storage/framework/views')
     ),
 
     'cache' => false,

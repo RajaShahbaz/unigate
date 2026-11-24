@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "my-applications-updated-collection",
+		"name": "My Applications API - Status-Wise Grouped (Updated)",
+		"description": "Updated API collection for getting applications grouped by status instead of paginated",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get My Applications (Status-Wise)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test response status",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Parse response",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Test response structure",
+							"pm.test(\"Response has required fields\", function () {",
+							"    pm.expect(jsonData).to.have.property('error');",
+							"    pm.expect(jsonData).to.have.property('message');",
+							"    pm.expect(jsonData).to.have.property('data');",
+							"    pm.expect(jsonData).to.have.property('code');",
+							"});",
+							"",
+							"// Test data structure",
+							"pm.test(\"Data has summary and applications\", function () {",
+							"    pm.expect(jsonData.data).to.have.property('summary');",
+							"    pm.expect(jsonData.data).to.have.property('applications');",
+							"});",
+							"",
+							"// Test summary structure",
+							"pm.test(\"Summary has all status counts\", function () {",
+							"    var summary = jsonData.data.summary;",
+							"    pm.expect(summary).to.have.property('total');",
+							"    pm.expect(summary).to.have.property('draft');",
+							"    pm.expect(summary).to.have.property('submitted');",
+							"    pm.expect(summary).to.have.property('under_review');",
+							"    pm.expect(summary).to.have.property('shortlisted');",
+							"    pm.expect(summary).to.have.property('accepted');",
+							"    pm.expect(summary).to.have.property('rejected');",
+							"    pm.expect(summary).to.have.property('withdrawn');",
+							"});",
+							"",
+							"// Test applications structure",
+							"pm.test(\"Applications has all status arrays\", function () {",
+							"    var applications = jsonData.data.applications;",
+							"    pm.expect(applications).to.have.property('draft');",
+							"    pm.expect(applications).to.have.property('submitted');",
+							"    pm.expect(applications).to.have.property('under_review');",
+							"    pm.expect(applications).to.have.property('shortlisted');",
+							"    pm.expect(applications).to.have.property('accepted');",
+							"    pm.expect(applications).to.have.property('rejected');",
+							"    pm.expect(applications).to.have.property('withdrawn');",
+							"    pm.expect(applications.draft).to.be.an('array');",
+							"    pm.expect(applications.submitted).to.be.an('array');",
+							"});",
+							"",
+							"// Test summary counts are numbers",
+							"pm.test(\"Summary counts are numbers\", function () {",
+							"    var summary = jsonData.data.summary;",
+							"    pm.expect(summary.total).to.be.a('number');",
+							"    pm.expect(summary.draft).to.be.a('number');",
+							"    pm.expect(summary.accepted).to.be.a('number');",
+							"});",
+							"",
+							"// Test summary total equals sum of statuses",
+							"pm.test(\"Summary total equals sum of all statuses\", function () {",
+							"    var summary = jsonData.data.summary;",
+							"    var sum = summary.draft + summary.submitted + summary.under_review + ",
+							"              summary.shortlisted + summary.accepted + summary.rejected + summary.withdrawn;",
+							"    pm.expect(summary.total).to.equal(sum);",
+							"});",
+							"",
+							"// Log summary",
+							"console.log('=== Application Summary ===');",
+							"console.log('Total:', jsonData.data.summary.total);",
+							"console.log('Draft:', jsonData.data.summary.draft);",
+							"console.log('Submitted:', jsonData.data.summary.submitted);",
+							"console.log('Under Review:', jsonData.data.summary.under_review);",
+							"console.log('Shortlisted:', jsonData.data.summary.shortlisted);",
+							"console.log('Accepted:', jsonData.data.summary.accepted);",
+							"console.log('Rejected:', jsonData.data.summary.rejected);",
+							"console.log('Withdrawn:', jsonData.data.summary.withdrawn);",
+							"",
+							"// Test application object structure (if any applications exist)",
+							"if (jsonData.data.summary.total > 0) {",
+							"    pm.test(\"Application objects have required fields\", function () {",
+							"        var apps = jsonData.data.applications;",
+							"        var sampleApp = null;",
+							"        ",
+							"        // Find first non-empty status array",
+							"        for (let status in apps) {",
+							"            if (apps[status].length > 0) {",
+							"                sampleApp = apps[status][0];",
+							"                break;",
+							"            }",
+							"        }",
+							"        ",
+							"        if (sampleApp) {",
+							"            pm.expect(sampleApp).to.have.property('id');",
+							"            pm.expect(sampleApp).to.have.property('application_number');",
+							"            pm.expect(sampleApp).to.have.property('university');",
+							"            pm.expect(sampleApp).to.have.property('interest');",
+							"            pm.expect(sampleApp).to.have.property('status');",
+							"            pm.expect(sampleApp).to.have.property('created_at');",
+							"            pm.expect(sampleApp).to.have.property('updated_at');",
+							"            ",
+							"            // Test university object",
+							"            pm.expect(sampleApp.university).to.have.property('id');",
+							"            pm.expect(sampleApp.university).to.have.property('name');",
+							"            ",
+							"            // Test interest object",
+							"            pm.expect(sampleApp.interest).to.have.property('id');",
+							"            pm.expect(sampleApp.interest).to.have.property('name');",
+							"        }",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/applications/my-applications",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"applications",
+						"my-applications"
+					]
+				},
+				"description": "Get all user's applications grouped by status (draft, submitted, under_review, shortlisted, accepted, rejected, withdrawn).\n\nReturns:\n- Summary with counts for each status\n- Applications grouped by status in separate arrays\n\nNo pagination - all applications returned in one call."
+			},
+			"response": [
+				{
+					"name": "Successful Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/applications/my-applications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"applications",
+								"my-applications"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": false,\n    \"message\": \"Applications retrieved successfully\",\n    \"data\": {\n        \"summary\": {\n            \"total\": 5,\n            \"draft\": 1,\n            \"submitted\": 1,\n            \"under_review\": 1,\n            \"shortlisted\": 1,\n            \"accepted\": 1,\n            \"rejected\": 0,\n            \"withdrawn\": 0\n        },\n        \"applications\": {\n            \"draft\": [\n                {\n                    \"id\": 10,\n                    \"application_number\": \"APP2025000010\",\n                    \"university\": {\n                        \"id\": 5,\n                        \"name\": \"Stanford University\",\n                        \"logo\": \"/storage/universities/stanford.png\",\n                        \"city\": \"Stanford\"\n                    },\n                    \"interest\": {\n                        \"id\": 3,\n                        \"name\": \"Data Science\"\n                    },\n                    \"status\": \"draft\",\n                    \"submitted_at\": null,\n                    \"reviewed_at\": null,\n                    \"created_at\": \"2025-11-01 10:30:00\",\n                    \"updated_at\": \"2025-11-02 14:20:00\"\n                }\n            ],\n            \"submitted\": [\n                {\n                    \"id\": 12,\n                    \"application_number\": \"APP2025000012\",\n                    \"university\": {\n                        \"id\": 2,\n                        \"name\": \"MIT\",\n                        \"logo\": \"/storage/universities/mit.png\",\n                        \"city\": \"Cambridge\"\n                    },\n                    \"interest\": {\n                        \"id\": 1,\n                        \"name\": \"Computer Science\"\n                    },\n                    \"status\": \"submitted\",\n                    \"submitted_at\": \"2025-10-28 09:15:00\",\n                    \"reviewed_at\": null,\n                    \"created_at\": \"2025-10-27 16:45:00\",\n                    \"updated_at\": \"2025-10-28 09:15:00\"\n                }\n            ],\n            \"under_review\": [\n                {\n                    \"id\": 15,\n                    \"application_number\": \"APP2025000015\",\n                    \"university\": {\n                        \"id\": 1,\n                        \"name\": \"Harvard University\",\n                        \"logo\": \"/storage/universities/harvard.png\",\n                        \"city\": \"Cambridge\"\n                    },\n                    \"interest\": {\n                        \"id\": 1,\n                        \"name\": \"Computer Science\"\n                    },\n                    \"status\": \"under_review\",\n                    \"submitted_at\": \"2025-10-15 14:30:00\",\n                    \"reviewed_at\": \"2025-10-20 11:00:00\",\n                    \"reviewer\": {\n                        \"id\": 45,\n                        \"name\": \"Dr. John Smith\"\n                    },\n                    \"created_at\": \"2025-10-14 08:20:00\",\n                    \"updated_at\": \"2025-11-01 09:20:00\"\n                }\n            ],\n            \"shortlisted\": [\n                {\n                    \"id\": 13,\n                    \"application_number\": \"APP2025000013\",\n                    \"university\": {\n                        \"id\": 3,\n                        \"name\": \"UC Berkeley\",\n                        \"logo\": \"/storage/universities/berkeley.png\",\n                        \"city\": \"Berkeley\"\n                    },\n                    \"interest\": {\n                        \"id\": 2,\n                        \"name\": \"Artificial Intelligence\"\n                    },\n                    \"status\": \"shortlisted\",\n                    \"submitted_at\": \"2025-10-10 11:45:00\",\n                    \"reviewed_at\": \"2025-10-25 15:30:00\",\n                    \"reviewer\": {\n                        \"id\": 48,\n                        \"name\": \"Prof. Sarah Johnson\"\n                    },\n                    \"created_at\": \"2025-10-09 13:10:00\",\n                    \"updated_at\": \"2025-10-28 16:15:00\"\n                }\n            ],\n            \"accepted\": [\n                {\n                    \"id\": 8,\n                    \"application_number\": \"APP2025000008\",\n                    \"university\": {\n                        \"id\": 4,\n                        \"name\": \"Carnegie Mellon University\",\n                        \"logo\": \"/storage/universities/cmu.png\",\n                        \"city\": \"Pittsburgh\"\n                    },\n                    \"interest\": {\n                        \"id\": 1,\n                        \"name\": \"Computer Science\"\n                    },\n                    \"status\": \"accepted\",\n                    \"submitted_at\": \"2025-09-15 10:00:00\",\n                    \"reviewed_at\": \"2025-10-05 14:30:00\",\n                    \"reviewer\": {\n                        \"id\": 50,\n                        \"name\": \"Dr. Emily Davis\"\n                    },\n                    \"created_at\": \"2025-09-14 11:30:00\",\n                    \"updated_at\": \"2025-10-15 09:45:00\"\n                }\n            ],\n            \"rejected\": [],\n            \"withdrawn\": []\n        }\n    },\n    \"code\": 200\n}"
+				},
+				{
+					"name": "Unauthorized Error",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/applications/my-applications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"applications",
+								"my-applications"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": true,\n    \"message\": \"Unauthenticated.\",\n    \"code\": 401\n}"
+				},
+				{
+					"name": "Empty Response (No Applications)",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/applications/my-applications",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"applications",
+								"my-applications"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": false,\n    \"message\": \"Applications retrieved successfully\",\n    \"data\": {\n        \"summary\": {\n            \"total\": 0,\n            \"draft\": 0,\n            \"submitted\": 0,\n            \"under_review\": 0,\n            \"shortlisted\": 0,\n            \"accepted\": 0,\n            \"rejected\": 0,\n            \"withdrawn\": 0\n        },\n        \"applications\": {\n            \"draft\": [],\n            \"submitted\": [],\n            \"under_review\": [],\n            \"shortlisted\": [],\n            \"accepted\": [],\n            \"rejected\": [],\n            \"withdrawn\": []\n        }\n    },\n    \"code\": 200\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "your_access_token_here",
+			"type": "string"
+		}
+	]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

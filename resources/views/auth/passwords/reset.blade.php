@@ -202,10 +202,10 @@
 </script>
 </body>
 
-@if (Session::has('error'))
+@if (session()->has('error'))
     <script type='text/javascript'>
         $.toast({
-            text: '{{ Session::get('error') }}',
+            text: '{{ session('error') }}',
             showHideTransition: 'slide',
             icon: 'error',
             loaderBg: '#f2a654',

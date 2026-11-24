@@ -28,6 +28,7 @@ class User extends Authenticatable {
         'first_name',
         'last_name',
         'email',
+        'role',
         'mobile',
         'image',
         'password',
@@ -304,11 +305,47 @@ class User extends Authenticatable {
 
     public function getRoleAttribute()
     {
+        if (array_key_exists('role', $this->attributes) && !empty($this->attributes['role'])) {
+            return $this->attributes['role'];
+        }
+
         if ($this->relationLoaded('roles')) {
             // return $this->full_name .' #'. $this->roles()->first()->name;
             return $this->roles()->first()->name;
             // return $this->roles()->first();
         }
         return '';
+    }
+
+    /**
+     * Get the user's education records.
+     */
+    public function education()
+    {
+        return $this->hasMany(UserEducation::class);
+    }
+
+    /**
+     * Get the user's interests.
+     */
+    public function interests()
+    {
+        return $this->belongsToMany(Interest::class, 'user_interests');
+    }
+
+    /**
+     * Get the user's preferred cities.
+     */
+    public function preferredCities()
+    {
+        return $this->belongsToMany(City::class, 'user_cities');
+    }
+
+    /**
+     * Get the user's favorite universities.
+     */
+    public function favoriteUniversities()
+    {
+        return $this->belongsToMany(University::class, 'user_favorites');
     }
 }

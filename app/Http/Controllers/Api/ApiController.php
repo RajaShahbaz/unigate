@@ -52,7 +52,7 @@ class ApiController extends Controller
     private FilesInterface $files;
     private ExamResultInterface $examResult;
     private GradesInterface $grade;
-    
+
 
     public function __construct(CachingService $cache, HolidayInterface $holiday, StudentInterface $student, PaymentConfigurationInterface $paymentConfiguration, PaymentTransactionInterface $paymentTransaction, GalleryInterface $gallery, SessionYearInterface $sessionYear, LeaveDetailInterface $leaveDetail, LeaveMasterInterface $leaveMaster, LeaveInterface $leave, UserInterface $user, MediumInterface $medium, ClassSectionInterface $classSection, ExamResultInterface $examResult, GradesInterface $grade, FilesInterface $files)
 
@@ -108,7 +108,7 @@ class ApiController extends Controller
 
             $data = $data->whereDate('date', '>=',$sessionYear->start_date)
                 ->whereDate('date', '<=',$sessionYear->end_date)->get();
-            
+
             ResponseService::successResponse("Holidays Fetched Successfully", $data);
         } catch (Throwable $e) {
             ResponseService::logErrorResponse($e);
@@ -269,9 +269,9 @@ class ApiController extends Controller
                     try {
                         if ($data->order_id) {
                             $paymentIntent = PaymentService::create($data->payment_gateway, $data->school_id)->retrievePaymentIntent($data->order_id);
-                            $paymentIntent = PaymentService::formatPaymentIntent($data->payment_gateway, $paymentIntent);    
+                            $paymentIntent = PaymentService::formatPaymentIntent($data->payment_gateway, $paymentIntent);
                         }
-                        
+
                     } catch (ApiErrorException) {
                         $this->paymentTransaction->update($data->id, ['payment_status' => "failed", 'school_id' => $data->school_id]);
                     }
@@ -413,7 +413,7 @@ class ApiController extends Controller
                 $fileData = []; // Empty FileData Array
                 // Create A File Model Instance
                 $leaveModelAssociate = $this->files->model()->modal()->associate($leave); // Get the Association Values of File with Assignment
-            
+
                 foreach ($request->file('files') as $file_upload) {
                     // Create Temp File Data Array
                     $tempFileData = [
@@ -685,7 +685,23 @@ class ApiController extends Controller
                 $user_data['image'] = $request->file('image');
             }
 
-            $user = $this->user->update(Auth::user()->id, $user_data);
+            $user = $this->user->update(auth()->user()->id, $user_data);
+
+            // Send notification similar to document upload
+            if (!function_exists('send_notification')) {
+                require_once app_path('Helpers/notification_helper.php');
+            }
+
+            $title = 'Profile Updated';
+            $body = 'Your profile has been updated successfully.';
+            $type = 'profile_update';
+
+            $customData = [
+                'type' => 'profile_update',
+                'user_id' => (string) $user->id,
+            ];
+
+            send_notification([$user->id], $title, $body, $type, $customData);
 
             ResponseService::successResponse('Data Updated Successfully', $user);
         } catch (\Throwable $th) {
@@ -698,7 +714,7 @@ class ApiController extends Controller
     {
         ResponseService::noFeatureThenSendJson('Exam Management');
 
-        
+
         try {
 
             $validator = Validator::make($request->all(), [

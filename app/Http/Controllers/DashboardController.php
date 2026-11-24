@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Addon;
+use App\Models\Application;
 use App\Models\Feature;
 use App\Models\Package;
 use App\Models\PaymentConfiguration;
+use App\Models\University;
+use App\Models\User;
 use App\Repositories\Announcement\AnnouncementInterface;
 use App\Repositories\ClassSchool\ClassSchoolInterface;
 use App\Repositories\Exam\ExamInterface;
@@ -25,6 +28,7 @@ use App\Services\SubscriptionService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller {
     private UserInterface $user;
@@ -64,7 +68,7 @@ class DashboardController extends Controller {
         $this->paymentTransaction = $paymentTransaction;
     }
 
-    public function index() {
+    public function index(Request $request) {
         $teacher = $student = $parent = $teachers = $subscription = $prepiad_upcoming_plan = $prepiad_upcoming_plan_type = $check_payment = null;
         $boys = $girls = $license_expire = 0;
         $previous_subscriptions = array();
@@ -82,7 +86,7 @@ class DashboardController extends Controller {
             $parent = $this->user->guardian()->whereHas('child.user', function ($q) {
                 $q->owner();
             })->count();
-            
+
             if ($student > 0) {
                 $boys_count = $this->user->builder()->role('Student')->where('gender', 'male')->count();
                 $girls_count = $this->user->builder()->role('Student')->where('gender', 'female')->count();
@@ -113,7 +117,7 @@ class DashboardController extends Controller {
                     // 1 => Already set upcoming plan update subscription
                     // 0 => Set current subscription plan as upcoming
                     $prepiad_upcoming_plan_type = 1;
-    
+
                     if (!$prepiad_upcoming_plan) {
                         // Add current subscription in the upcoming subscription
                         $prepiad_upcoming_plan = $subscription;
@@ -141,7 +145,7 @@ class DashboardController extends Controller {
                 $q->where('class_subject_id', null);
             })->limit(5)->orderBy('id','desc')->get();
 
-            
+
             // Attendance graph
             $class_names = $this->class->builder()->with('medium','stream')->get()->pluck('full_name','id');
 
@@ -152,7 +156,7 @@ class DashboardController extends Controller {
             $student_ids = $this->feesPaid->builder()->whereHas('fees',function($q) use($defaultSessionYear){
                 $q->where('session_year_id',$defaultSessionYear->id);
             })->has('compulsory_fee')->groupBy('student_id')->pluck('student_id');
-            
+
             $unPaidFees = $this->user->builder()->role('Student')->whereNotIn('id',$student_ids)->count();
 
             $partialPaidFees = $this->feesPaid->builder()->whereHas('fees',function($q) use($defaultSessionYear) {
@@ -162,7 +166,7 @@ class DashboardController extends Controller {
             $fullPaidFees = $this->feesPaid->builder()->whereHas('fees',function($q) use($defaultSessionYear) {
                 $q->where('session_year_id',$defaultSessionYear->id);
             })->has('compulsory_fee')->where('is_fully_paid',1)->groupBy('student_id')->orderBy('id')->get()->count();
-            
+
             if ($partialPaidFees == 0 && $fullPaidFees == 0) {
                 $unPaidFees = 0;
             }
@@ -181,6 +185,38 @@ class DashboardController extends Controller {
             'active_school'   => 0,
             'deactive_school' => 0,
         ];
+        $superAdminOverview = [
+            'universities' => [
+                'total' => 0,
+                'active' => 0,
+                'inactive' => 0,
+            ],
+            'students' => [
+                'total' => 0,
+                'active' => 0,
+                'inactive' => 0,
+            ],
+            'applications' => [
+                'total' => 0,
+                'today' => 0,
+                'documents_pending' => 0,
+                'under_review' => 0,
+            ],
+        ];
+        $applicationStatusChart = [
+            'labels' => [],
+            'data' => [],
+        ];
+        $applicationTimeline = [
+            'labels' => [],
+            'applications' => [],
+            'students' => [],
+        ];
+        $topUniversities = collect();
+        $recentApplications = collect();
+        $universityStatusChart = ['labels' => [], 'data' => []];
+        $studentStatusChart = ['labels' => [], 'data' => []];
+
         if (Auth::user()->hasRole('Super Admin') || !Auth::user()->school_id) {
             $school = $this->school->builder()->get();
             $total_school = $school->count();
@@ -194,6 +230,117 @@ class DashboardController extends Controller {
                 'inactive_schools' => $deactive_school,
                 'total_packages' => $packages
             ];
+
+            // University level overview
+            $universityCounts = [
+                'total' => University::count(),
+                'active' => University::where('status', 1)->count(),
+                'inactive' => University::where('status', 0)->count(),
+            ];
+
+            $studentBaseQuery = User::role('Student');
+            $studentOverview = [
+                'total' => (clone $studentBaseQuery)->count(),
+                'active' => (clone $studentBaseQuery)->where('status', 1)->count(),
+                'inactive' => (clone $studentBaseQuery)->where('status', 0)->count(),
+            ];
+
+            $applicationStatuses = [
+                'draft',
+                'submitted',
+                'documents_pending',
+                'under_review',
+                'shortlisted',
+                'interview_scheduled',
+                'accepted',
+                'rejected',
+                'withdrawn',
+            ];
+
+            $applicationStatusCounts = Application::select('status', DB::raw('COUNT(*) as total'))
+                ->groupBy('status')
+                ->pluck('total', 'status');
+
+            $applicationStatusChart = [
+                'labels' => [],
+                'data' => [],
+            ];
+
+            foreach ($applicationStatuses as $status) {
+                $applicationStatusChart['labels'][] = ucwords(str_replace('_', ' ', $status));
+                $applicationStatusChart['data'][] = (int)($applicationStatusCounts[$status] ?? 0);
+            }
+
+            $applicationsToday = Application::whereDate('created_at', Carbon::today())->count();
+
+            $superAdminOverview = [
+                'universities' => $universityCounts,
+                'students' => $studentOverview,
+                'applications' => [
+                    'total' => array_sum($applicationStatusChart['data']),
+                    'today' => $applicationsToday,
+                    'documents_pending' => (int)($applicationStatusCounts['documents_pending'] ?? 0),
+                    'under_review' => (int)($applicationStatusCounts['under_review'] ?? 0),
+                ],
+            ];
+
+            $universityStatusChart = [
+                'labels' => [__('Active'), __('Inactive')],
+                'data' => [
+                    (int)($universityCounts['active'] ?? 0),
+                    (int)($universityCounts['inactive'] ?? 0),
+                ],
+            ];
+
+            $studentStatusChart = [
+                'labels' => [__('Active'), __('Inactive')],
+                'data' => [
+                    (int)($studentOverview['active'] ?? 0),
+                    (int)($studentOverview['inactive'] ?? 0),
+                ],
+            ];
+
+            $monthsBack = 6;
+            $months = collect(range($monthsBack - 1, 0))->map(function ($offset) {
+                $date = Carbon::now()->subMonths($offset);
+                return [
+                    'key' => $date->format('Y-m'),
+                    'label' => $date->format('M Y'),
+                ];
+            });
+            $startDate = Carbon::now()->subMonths($monthsBack - 1)->startOfMonth();
+
+            $applicationTimelineRaw = Application::where('created_at', '>=', $startDate)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as total")
+                ->groupBy('month_key')
+                ->pluck('total', 'month_key');
+
+            $studentTimelineRaw = User::role('Student')
+                ->where('created_at', '>=', $startDate)
+                ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month_key, COUNT(*) as total")
+                ->groupBy('month_key')
+                ->pluck('total', 'month_key');
+
+            $applicationTimeline = [
+                'labels' => $months->pluck('label')->toArray(),
+                'applications' => $months->map(fn ($month) => (int)($applicationTimelineRaw[$month['key']] ?? 0))->toArray(),
+                'students' => $months->map(fn ($month) => (int)($studentTimelineRaw[$month['key']] ?? 0))->toArray(),
+            ];
+
+            $topUniversities = University::select('id', 'name', 'logo', 'city_id')
+                ->with('city:id,name')
+                ->withCount('applications')
+                ->orderByDesc('applications_count')
+                ->limit(5)
+                ->get();
+
+            $recentApplications = Application::with([
+                    'user:id,first_name,last_name',
+                    'university:id,name,logo',
+                ])
+                ->latest()
+                ->limit(6)
+                ->get();
 
             $paymentTransaction = $this->paymentTransaction->builder()->has('subscription_bill')->select(DB::raw('YEAR(MIN(created_at)) as min_year'))->value('min_year');
 
@@ -247,7 +394,7 @@ class DashboardController extends Controller {
                 ->where('day', $fullDayName)->orderBy('start_time', 'ASC')
                 ->with('subject:id,name,type', 'class_section.class', 'class_section.section', 'class_section.medium')->get();
         }
-        
+
         if ((Auth::user()->hasRole('School Admin') || Auth::user()->school_id) && (!Auth::user()->hasRole('Teacher') && !Auth::user()->hasRole('Super Admin')) ) {
             return view('dashboard', compact('teacher', 'parent', 'student', 'announcement', 'teachers', 'boys', 'girls', 'total_students','license_expire', 'subscription', 'previous_subscriptions', 'holiday', 'classData', 'prepiad_upcoming_plan', 'prepiad_upcoming_plan_type','check_payment','sessionYear','classes_counter','streams','exams', 'fees_detail', 'settings', 'class_names', 'paymentConfiguration','system_settings'));
         }
@@ -256,7 +403,26 @@ class DashboardController extends Controller {
         }
 
         if (Auth::user()->hasRole('Super Admin') || Auth::user()->school_id == null) {
-            return view('dashboard', compact('settings', 'super_admin','boys', 'girls', 'fees_detail','start_year','schools','staffs','addon_graph','package_graph', 'paymentConfiguration'));
+            return view('dashboard', compact(
+                'settings',
+                'super_admin',
+                'boys',
+                'girls',
+                'fees_detail',
+                'start_year',
+                'schools',
+                'staffs',
+                'addon_graph',
+                'package_graph',
+                'paymentConfiguration',
+                'superAdminOverview',
+                'applicationStatusChart',
+                'applicationTimeline',
+                'topUniversities',
+                'recentApplications',
+                'universityStatusChart',
+                'studentStatusChart'
+            ));
         }
 
     }

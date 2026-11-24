@@ -9,4 +9,4 @@
 <link rel="stylesheet" href="{{ asset('assets/home_page/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('/assets/jquery-toast-plugin/jquery.toast.min.css') }}">
 
-<link rel="shortcut icon" href="{{$systemSettings['favicon'] ?? url('assets/vertical-logo.svg') }}"/>
+<link rel="shortcut icon" href="{{$systemSettings['favicon'] ?? url('assets/new-favicon.jpg') }}"/>

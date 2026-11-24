@@ -1,5 +1,5 @@
 @php
-    $lang = Session::get('language');
+    $lang = session('language');
 @endphp
 <link rel="stylesheet" href="{{ asset('/assets/css/materialdesignicons.min.css') }}">
 <link rel="stylesheet" href="{{ asset('/assets/css/vendor.bundle.base.css') }}">
@@ -49,7 +49,7 @@
     }
 </style>
 <script>
-    const baseUrl = "{{ URL::to('/') }}";
+    const baseUrl = "{{ url('/') }}";
 
     // Function to handle image errors
     function handleImageError(image) {

@@ -1,0 +1,347 @@
+{
+  "name": "Student Document Management API Examples",
+  "description": "Ready-to-use API examples for student document management system",
+  "base_url": "http://your-domain.com/api",
+  "authentication": "Bearer Token (Sanctum)",
+  
+  "api_endpoints": [
+    {
+      "name": "1. Get All Documents",
+      "method": "GET",
+      "endpoint": "/documents",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Accept": "application/json"
+      },
+      "query_parameters": {
+        "search": "passport (optional)",
+        "sort_by": "created_at (optional)",
+        "sort_order": "desc (optional)",
+        "per_page": "15 (optional)"
+      },
+      "example_url": "/documents?search=certificate&sort_by=created_at&sort_order=desc&per_page=20"
+    },
+    {
+      "name": "2. Get Document Statistics",
+      "method": "GET",
+      "endpoint": "/documents/statistics",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Accept": "application/json"
+      },
+      "response_example": {
+        "error": false,
+        "message": "Statistics retrieved successfully",
+        "data": {
+          "total_documents": 15,
+          "total_size": 52428800,
+          "total_size_formatted": "50.00 MB",
+          "recent_uploads": 5
+        }
+      }
+    },
+    {
+      "name": "3. Get Single Document",
+      "method": "GET",
+      "endpoint": "/documents/{id}",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Accept": "application/json"
+      },
+      "example_url": "/documents/1"
+    },
+    {
+      "name": "4. Upload New Document",
+      "method": "POST",
+      "endpoint": "/documents",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Content-Type": "multipart/form-data"
+      },
+      "body_type": "form-data",
+      "body_fields": {
+        "document_name": "Birth Certificate (required)",
+        "notes": "Original copy from hospital (optional)",
+        "file": "[FILE] (required, max 10MB)"
+      },
+      "curl_example": "curl -X POST http://your-domain.com/api/documents \\\n  -H 'Authorization: Bearer YOUR_TOKEN' \\\n  -F 'document_name=Birth Certificate' \\\n  -F 'notes=Original copy' \\\n  -F 'file=@/path/to/file.pdf'"
+    },
+    {
+      "name": "5. Update Document Details",
+      "method": "PUT",
+      "endpoint": "/documents/{id}",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "document_name": "Updated Document Name",
+        "notes": "Updated notes here"
+      },
+      "example_url": "/documents/1"
+    },
+    {
+      "name": "6. Replace Document File",
+      "method": "POST",
+      "endpoint": "/documents/{id}/replace-file",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Content-Type": "multipart/form-data"
+      },
+      "body_type": "form-data",
+      "body_fields": {
+        "file": "[NEW FILE] (required, max 10MB)"
+      },
+      "example_url": "/documents/1/replace-file",
+      "curl_example": "curl -X POST http://your-domain.com/api/documents/1/replace-file \\\n  -H 'Authorization: Bearer YOUR_TOKEN' \\\n  -F 'file=@/path/to/new_file.pdf'"
+    },
+    {
+      "name": "7. Delete Document",
+      "method": "DELETE",
+      "endpoint": "/documents/{id}",
+      "headers": {
+        "Authorization": "Bearer {token}",
+        "Accept": "application/json"
+      },
+      "example_url": "/documents/1",
+      "note": "This permanently deletes both the database record and the physical file"
+    },
+    {
+      "name": "8. Download Document",
+      "method": "GET",
+      "endpoint": "/documents/{id}/download",
+      "headers": {
+        "Authorization": "Bearer {token}"
+      },
+      "example_url": "/documents/1/download",
+      "response_type": "File Download",
+      "note": "Browser will download the file with original filename"
+    }
+  ],
+
+  "complete_workflows": [
+    {
+      "workflow": "Upload and Manage Documents",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Upload Passport",
+          "method": "POST",
+          "endpoint": "/documents",
+          "body_formdata": {
+            "document_name": "Passport - John Doe",
+            "notes": "Valid until 2030. Renewal reminder set for 2029.",
+            "file": "[passport_scan.pdf]"
+          }
+        },
+        {
+          "step": 2,
+          "action": "Upload Birth Certificate",
+          "method": "POST",
+          "endpoint": "/documents",
+          "body_formdata": {
+            "document_name": "Birth Certificate",
+            "notes": "Original document received from hospital.",
+            "file": "[birth_cert.pdf]"
+          }
+        },
+        {
+          "step": 3,
+          "action": "View All Documents",
+          "method": "GET",
+          "endpoint": "/documents?sort_by=created_at&sort_order=desc"
+        },
+        {
+          "step": 4,
+          "action": "Search for Specific Document",
+          "method": "GET",
+          "endpoint": "/documents?search=passport"
+        },
+        {
+          "step": 5,
+          "action": "Update Document Notes",
+          "method": "PUT",
+          "endpoint": "/documents/1",
+          "body": {
+            "notes": "Passport renewed in 2025. New expiry: 2035"
+          }
+        },
+        {
+          "step": 6,
+          "action": "Check Storage Statistics",
+          "method": "GET",
+          "endpoint": "/documents/statistics"
+        }
+      ]
+    },
+    {
+      "workflow": "Replace Outdated Document",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Find Document to Replace",
+          "method": "GET",
+          "endpoint": "/documents?search=old_passport"
+        },
+        {
+          "step": 2,
+          "action": "Replace File",
+          "method": "POST",
+          "endpoint": "/documents/1/replace-file",
+          "body_formdata": {
+            "file": "[new_passport_scan.pdf]"
+          }
+        },
+        {
+          "step": 3,
+          "action": "Update Document Name",
+          "method": "PUT",
+          "endpoint": "/documents/1",
+          "body": {
+            "document_name": "Passport - Renewed 2025",
+            "notes": "New passport. Valid until 2035."
+          }
+        }
+      ]
+    },
+    {
+      "workflow": "Cleanup Old Documents",
+      "steps": [
+        {
+          "step": 1,
+          "action": "List All Documents",
+          "method": "GET",
+          "endpoint": "/documents"
+        },
+        {
+          "step": 2,
+          "action": "Download Important Documents (Backup)",
+          "method": "GET",
+          "endpoint": "/documents/1/download"
+        },
+        {
+          "step": 3,
+          "action": "Delete Unnecessary Documents",
+          "method": "DELETE",
+          "endpoint": "/documents/5"
+        },
+        {
+          "step": 4,
+          "action": "Check Updated Statistics",
+          "method": "GET",
+          "endpoint": "/documents/statistics"
+        }
+      ]
+    }
+  ],
+
+  "javascript_examples": {
+    "upload_document": {
+      "description": "Upload a new document with file",
+      "code": "const formData = new FormData();\nformData.append('document_name', 'My Transcript');\nformData.append('notes', 'Official transcript from university');\nformData.append('file', fileInput.files[0]);\n\nfetch('/api/documents', {\n  method: 'POST',\n  headers: {\n    'Authorization': 'Bearer ' + token\n  },\n  body: formData\n})\n.then(response => response.json())\n.then(data => {\n  console.log('Uploaded:', data.data);\n});"
+    },
+    "get_all_documents": {
+      "description": "Fetch all documents with search and sorting",
+      "code": "fetch('/api/documents?search=certificate&sort_by=created_at&sort_order=desc', {\n  headers: {\n    'Authorization': 'Bearer ' + token,\n    'Accept': 'application/json'\n  }\n})\n.then(response => response.json())\n.then(data => {\n  console.log('Documents:', data.data.data);\n});"
+    },
+    "update_document": {
+      "description": "Update document name and notes",
+      "code": "fetch('/api/documents/1', {\n  method: 'PUT',\n  headers: {\n    'Authorization': 'Bearer ' + token,\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify({\n    document_name: 'Updated Name',\n    notes: 'Updated notes'\n  })\n})\n.then(response => response.json())\n.then(data => {\n  console.log('Updated:', data.data);\n});"
+    },
+    "delete_document": {
+      "description": "Delete a document",
+      "code": "if (confirm('Are you sure you want to delete this document?')) {\n  fetch('/api/documents/1', {\n    method: 'DELETE',\n    headers: {\n      'Authorization': 'Bearer ' + token\n    }\n  })\n  .then(response => response.json())\n  .then(data => {\n    console.log('Deleted successfully');\n  });\n}"
+    },
+    "download_document": {
+      "description": "Download a document",
+      "code": "// Method 1: Direct link\nwindow.location.href = '/api/documents/1/download';\n\n// Method 2: Fetch and create download\nfetch('/api/documents/1/download', {\n  headers: {\n    'Authorization': 'Bearer ' + token\n  }\n})\n.then(response => response.blob())\n.then(blob => {\n  const url = window.URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'document.pdf';\n  a.click();\n});"
+    }
+  },
+
+  "react_component_example": {
+    "description": "Complete React component for document management",
+    "code": "import React, { useState, useEffect } from 'react';\n\nfunction DocumentManager() {\n  const [documents, setDocuments] = useState([]);\n  const [searchTerm, setSearchTerm] = useState('');\n  const [uploadForm, setUploadForm] = useState({\n    document_name: '',\n    notes: '',\n    file: null\n  });\n\n  useEffect(() => {\n    fetchDocuments();\n  }, [searchTerm]);\n\n  const fetchDocuments = async () => {\n    const url = searchTerm \n      ? `/api/documents?search=${searchTerm}`\n      : '/api/documents';\n    \n    const response = await fetch(url, {\n      headers: { 'Authorization': `Bearer ${token}` }\n    });\n    const data = await response.json();\n    setDocuments(data.data.data);\n  };\n\n  const handleUpload = async (e) => {\n    e.preventDefault();\n    const formData = new FormData();\n    formData.append('document_name', uploadForm.document_name);\n    formData.append('notes', uploadForm.notes);\n    formData.append('file', uploadForm.file);\n\n    await fetch('/api/documents', {\n      method: 'POST',\n      headers: { 'Authorization': `Bearer ${token}` },\n      body: formData\n    });\n\n    setUploadForm({ document_name: '', notes: '', file: null });\n    fetchDocuments();\n  };\n\n  const handleDelete = async (id) => {\n    if (confirm('Delete this document?')) {\n      await fetch(`/api/documents/${id}`, {\n        method: 'DELETE',\n        headers: { 'Authorization': `Bearer ${token}` }\n      });\n      fetchDocuments();\n    }\n  };\n\n  return (\n    <div>\n      <h1>My Documents</h1>\n      \n      <form onSubmit={handleUpload}>\n        <input\n          type=\"text\"\n          placeholder=\"Document Name\"\n          value={uploadForm.document_name}\n          onChange={(e) => setUploadForm({...uploadForm, document_name: e.target.value})}\n          required\n        />\n        <textarea\n          placeholder=\"Notes (optional)\"\n          value={uploadForm.notes}\n          onChange={(e) => setUploadForm({...uploadForm, notes: e.target.value})}\n        />\n        <input\n          type=\"file\"\n          onChange={(e) => setUploadForm({...uploadForm, file: e.target.files[0]})}\n          required\n        />\n        <button type=\"submit\">Upload</button>\n      </form>\n\n      <input\n        type=\"text\"\n        placeholder=\"Search documents...\"\n        value={searchTerm}\n        onChange={(e) => setSearchTerm(e.target.value)}\n      />\n\n      <div>\n        {documents.map(doc => (\n          <div key={doc.id}>\n            <h3>{doc.document_name}</h3>\n            <p>{doc.notes}</p>\n            <p>Size: {doc.file_size_formatted}</p>\n            <a href={doc.file_url} target=\"_blank\">View</a>\n            <a href={`/api/documents/${doc.id}/download`}>Download</a>\n            <button onClick={() => handleDelete(doc.id)}>Delete</button>\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n}"
+  },
+
+  "validation_rules": {
+    "upload": {
+      "document_name": "required|string|max:255",
+      "notes": "nullable|string|max:5000",
+      "file": "required|file|max:10240"
+    },
+    "update": {
+      "document_name": "sometimes|required|string|max:255",
+      "notes": "nullable|string|max:5000"
+    },
+    "replace_file": {
+      "file": "required|file|max:10240"
+    }
+  },
+
+  "response_examples": {
+    "success_upload": {
+      "error": false,
+      "message": "Document uploaded successfully",
+      "data": {
+        "id": 1,
+        "user_id": 5,
+        "document_name": "My Passport",
+        "notes": "Valid until 2030",
+        "file_path": "student_documents/abc123.pdf",
+        "original_filename": "passport.pdf",
+        "file_type": "application/pdf",
+        "file_size": 1048576,
+        "file_url": "http://domain.com/storage/student_documents/abc123.pdf",
+        "file_size_formatted": "1.00 MB",
+        "created_at": "2025-10-21T10:00:00.000000Z",
+        "updated_at": "2025-10-21T10:00:00.000000Z"
+      }
+    },
+    "validation_error": {
+      "error": true,
+      "message": "Validation error",
+      "data": {
+        "document_name": ["The document name field is required."],
+        "file": ["The file field is required."]
+      }
+    },
+    "not_found": {
+      "error": true,
+      "message": "Failed to retrieve document",
+      "data": "Model not found"
+    }
+  },
+
+  "testing_checklist": [
+    "✓ Upload document with name and notes",
+    "✓ Upload document without notes (optional field)",
+    "✓ Get all documents",
+    "✓ Search documents by name",
+    "✓ Sort documents by date",
+    "✓ Sort documents by size",
+    "✓ View single document",
+    "✓ Update document name",
+    "✓ Update document notes",
+    "✓ Replace document file",
+    "✓ Delete document",
+    "✓ Download document",
+    "✓ View statistics",
+    "✓ Test file size limit (10MB)",
+    "✓ Test without authentication (should fail)",
+    "✓ Test accessing other user's document (should fail)"
+  ],
+
+  "notes": [
+    "All endpoints require Sanctum authentication",
+    "Maximum file size: 10MB",
+    "Files stored in: storage/app/public/student_documents/",
+    "Accessible via: /storage/student_documents/{filename}",
+    "Automatic file cleanup on deletion",
+    "Soft deletes enabled for data recovery",
+    "Search works across name, notes, and filename",
+    "File size automatically formatted (bytes, KB, MB, GB)",
+    "File type detection (images, PDFs, documents)",
+    "Users can only access their own documents"
+  ]
+}
+

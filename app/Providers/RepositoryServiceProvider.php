@@ -168,6 +168,18 @@ use App\Repositories\StaffPayroll\StaffPayrollInterface;
 use App\Repositories\StaffPayroll\StaffPayrollRepository;
 use App\Repositories\StaffSalary\StaffSalaryInterface;
 use App\Repositories\StaffSalary\StaffSalaryRepository;
+use App\Repositories\UniversityGallery\UniversityGalleryInterface;
+use App\Repositories\UniversityGallery\UniversityGalleryRepository;
+use App\Repositories\Scholarship\ScholarshipInterface;
+use App\Repositories\Scholarship\ScholarshipRepository;
+use App\Repositories\AdmissionRequirement\AdmissionRequirementInterface;
+use App\Repositories\AdmissionRequirement\AdmissionRequirementRepository;
+use App\Repositories\CustomApplicationStep\CustomApplicationStepInterface;
+use App\Repositories\CustomApplicationStep\CustomApplicationStepRepository;
+use App\Repositories\CustomApplicationStepField\CustomApplicationStepFieldInterface;
+use App\Repositories\CustomApplicationStepField\CustomApplicationStepFieldRepository;
+use App\Repositories\AppFaq\AppFaqInterface;
+use App\Repositories\AppFaq\AppFaqRepository;
 use Notification;
 
 class RepositoryServiceProvider extends ServiceProvider {
@@ -260,6 +272,12 @@ class RepositoryServiceProvider extends ServiceProvider {
         $this->app->bind(PayrollSettingInterface::class, PayrollSettingRepository::class);
         $this->app->bind(StaffSalaryInterface::class, StaffSalaryRepository::class);
         $this->app->bind(StaffPayrollInterface::class, StaffPayrollRepository::class);
+        $this->app->bind(UniversityGalleryInterface::class, UniversityGalleryRepository::class);
+        $this->app->bind(ScholarshipInterface::class, ScholarshipRepository::class);
+        $this->app->bind(AdmissionRequirementInterface::class, AdmissionRequirementRepository::class);
+        $this->app->bind(CustomApplicationStepInterface::class, CustomApplicationStepRepository::class);
+        $this->app->bind(CustomApplicationStepFieldInterface::class, CustomApplicationStepFieldRepository::class);
+        $this->app->bind(AppFaqInterface::class, AppFaqRepository::class);
 
     }
 

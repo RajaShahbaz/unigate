@@ -55,7 +55,7 @@
                                 <a href="{{ $schoolSettings['facebook'] }}" target="_blank">
                                     <i class="fa-brands fa-square-facebook"></i>
                                 </a>
-                            </span>    
+                            </span>
                         @endif
 
                         @if ($schoolSettings['instagram'] ?? '')
@@ -63,7 +63,7 @@
                                 <a href="{{ $schoolSettings['instagram'] }}" target="_blank">
                                     <i class="fa-brands fa-square-instagram"></i>
                                 </a>
-                            </span>    
+                            </span>
                         @endif
 
                         @if ($schoolSettings['linkedin'] ?? '')
@@ -71,7 +71,7 @@
                                 <a href="{{ $schoolSettings['linkedin'] }}" target="_blank">
                                     <i class="fa-brands fa-linkedin"></i>
                                 </a>
-                            </span>    
+                            </span>
                         @endif
 
                         @if ($schoolSettings['twitter'] ?? '')
@@ -79,7 +79,7 @@
                                 <a href="{{ $schoolSettings['twitter'] }}" target="_blank">
                                     <i class="fa-brands fa-square-twitter"></i>
                                 </a>
-                            </span>    
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -113,7 +113,7 @@
 
             <div class="col-sm-6 col-md-6 col-lg-4">
                 <div class="linksWrapper">
-                    <span class="title">Download eSchool Apps</span>
+                    <span class="title">Download Unigate Apps</span>
 
                     <div class="appContainer">
                         <a class="appWrapper" href="{{ $systemSettings['app_link'] ?? '' }}">
@@ -156,10 +156,10 @@
     </div>
     <div class="copyRightText">
         <span class="text-center">
-            
+
             {{ $schoolSettings['footer_text'] ?? '' }}
             {!! $systemSettings['footer_text'] ?? '' !!}
-            
+
         </span>
     </div>
 </footer>

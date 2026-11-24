@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 @php
-    $lang = Session::get('language');
+    $lang = session('language');
 @endphp
 @if ($lang)
     @if ($lang->is_rtl)
@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@yield('title')
         {{-- {{ config('app.name') }} --}}
-        {{ $systemSettings['system_name'] ?? 'eSchool - Saas' }}
+        {{ $systemSettings['system_name'] ?? 'Unigate' }}
     </title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('layouts.home_page.include')
@@ -31,6 +31,7 @@
 
         @yield('content')
 
+        @include('student_signup_modal')
         @include('layouts.home_page.footer')
     </div>
     @include('layouts.home_page.footer_js')

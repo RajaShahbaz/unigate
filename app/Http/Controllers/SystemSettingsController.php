@@ -44,7 +44,7 @@ class SystemSettingsController extends Controller {
         $this->schoolSetting = $schoolSetting;
     }
 
-    public function index() {
+    public function index(Request $request) {
         ResponseService::noPermissionThenRedirect('system-setting-manage');
         $settings = $this->cache->getSystemSettings();
         $getDateFormat = getDateFormat();
@@ -105,7 +105,7 @@ class SystemSettingsController extends Controller {
                     "type" => "integer"
                 ];
             }
-            
+
             EnvSet::setKey('timezone', $request->time_zone);
             EnvSet::save();
 
@@ -113,7 +113,7 @@ class SystemSettingsController extends Controller {
             EnvSet::save();
 
             $this->systemSettings->upsert($data, ["name"], ["data"]);
-            
+
             $this->cache->removeSystemCache(config('constants.CACHE.SYSTEM.SETTINGS'));
             ResponseService::successResponse('Data Updated Successfully');
         } catch (Throwable $e) {
@@ -373,7 +373,7 @@ class SystemSettingsController extends Controller {
 
     public function paymentUpdate(Request $request) {
         /* This method is used for both Super Admin & School Admin */
-      
+
         ResponseService::noAnyRoleThenRedirect(['Super Admin', 'School Admin']);
         $request->validate([
             'gateway'        => 'required|array',
@@ -516,7 +516,7 @@ class SystemSettingsController extends Controller {
                 foreach ($school_ids as $key => $school_id) {
                     $this->cache->removeSchoolCache(config('constants.CACHE.SCHOOL.FEATURES'),$school_id);
                 }
-                
+
             } else {
                 // Create trial Package
                 $package = $this->package->create($package_data);
@@ -560,12 +560,12 @@ class SystemSettingsController extends Controller {
         $settings = array(
             'firebase_service_file', 'firebase_project_id'
         );
-        
+
         try {
             $data = array();
-           
+
             foreach ($settings as $row) {
-               
+
                 if ($row == 'firebase_service_file') {
                     if ($request->hasFile($row)) {
                         $data[] = [
@@ -596,7 +596,7 @@ class SystemSettingsController extends Controller {
     {
         $name = 'email_template_school_registration';
         $data = htmlspecialchars_decode($this->cache->getSystemSettings($name));
-        
+
         return view('settings.email_template',compact('name','data'));
     }
 

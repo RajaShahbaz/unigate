@@ -12,10 +12,10 @@
             </h3>
         </div>
         {{-- School Dashboard --}}
-        @if (Auth::user()->hasRole('School Admin') || Auth::user()->school_id)
+        @if (auth()->user()->hasRole('School Admin') || auth()->user()->school_id)
             <div class="row">
                 {{-- License expire message --}}
-                @if (Auth::user()->hasRole('School Admin'))
+                @if (auth()->user()->hasRole('School Admin'))
                     @if ($license_expire <= ($settings['current_plan_expiry_warning_days'] ?? 7) && $subscription)
                         <div class="col-sm-12 col-md-12">
                             <div class="alert alert-danger" role="alert">
@@ -92,7 +92,7 @@
             </div>
         @endif
     </div>
-    @if (Auth::user()->hasRole('School Admin'))
+    @if (auth()->user()->hasRole('School Admin'))
         <div class="row">
             {{-- Teachers --}}
             <div class="col-md-2-4 stretch-card grid-margin">
@@ -186,7 +186,7 @@
     <div class="row">
 
         {{-- Expense Graph --}}
-        @if (Auth::user()->canany(['expense-create', 'expense-list']))
+        @if (auth()->user()->canany(['expense-create', 'expense-list']))
             <div class="col-md-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body custom-card-body">
@@ -264,6 +264,217 @@
 
 
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">{{ __('Applications & Students (Last 6 Months)') }}</h4>
+                        <span class="text-muted small">{{ __('Realtime overview') }}</span>
+                    </div>
+                    <div id="applicationTimelineChart" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">{{ __('Applications by Status') }}</h4>
+                        <span class="text-muted small">{{ __('Pipeline snapshot') }}</span>
+                    </div>
+                    <div id="applicationStatusChart" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <h4 class="card-title mb-3">{{ __('Universities Status') }}</h4>
+                    <div id="universityStatusChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <h4 class="card-title mb-3">{{ __('Students Status') }}</h4>
+                    <div id="studentStatusChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <h4 class="card-title">{{ __('Top Universities (by applications)') }}</h4>
+                    <div class="table-responsive v-scroll">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>{{ __('University') }}</th>
+                                    <th class="text-right">{{ __('Applications') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($topUniversities as $university)
+                                    <tr>
+                                        <td style="width: 60px;">
+                                            <img src="{{ $university->logo }}" onerror="onErrorImage(event)"
+                                                class="me-2" alt="logo">
+                                        </td>
+                                        <td>
+                                            <div class="font-weight-bold">{{ $university->name }}</div>
+                                            <small class="text-muted">{{ $university->city->name ?? __('N/A') }}</small>
+                                        </td>
+                                        <td class="text-right font-weight-bold">
+                                            {{ number_format($university->applications_count) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">
+                                            {{ __('No application data available yet.') }}
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <h4 class="card-title">{{ __('Latest Applications') }}</h4>
+                    @php
+                        $statusBadgeClasses = [
+                            'draft' => 'badge-secondary',
+                            'submitted' => 'badge-info',
+                            'documents_pending' => 'badge-warning',
+                            'under_review' => 'badge-primary',
+                            'shortlisted' => 'badge-success',
+                            'interview_scheduled' => 'badge-success',
+                            'accepted' => 'badge-success',
+                            'rejected' => 'badge-danger',
+                            'withdrawn' => 'badge-dark',
+                        ];
+                    @endphp
+                    <div class="v-scroll dashboard-description">
+                        <table class="table custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{ __('Applicant') }}</th>
+                                    <th>{{ __('University') }}</th>
+                                    <th class="text-right">{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($recentApplications as $application)
+                                    <tr>
+                                        <td>
+                                            <div class="font-weight-bold">{{ $application->user->full_name ?? __('N/A') }}</div>
+                                            <small class="text-muted">{{ $application->application_number }}</small>
+                                        </td>
+                                        <td>
+                                            <div>{{ $application->university->name ?? __('N/A') }}</div>
+                                            <small class="text-muted">{{ $application->created_at->format('M d, Y') }}</small>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="badge {{ $statusBadgeClasses[$application->status] ?? 'badge-light' }}">
+                                                {{ ucwords(str_replace('_', ' ', $application->status)) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">
+                                            {{ __('No applications submitted yet.') }}
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Active Students') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['students']['active']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/guardians.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Total Applications') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['applications']['total']) }}</h3>
+                            </p>
+                            <p class="text-muted small mb-0">{{ __('Today') }}: {{ number_format($superAdminOverview['applications']['today']) }}</p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/package.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Documents Pending') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['applications']['documents_pending']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/circle.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Under Review') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['applications']['under_review']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/circle.svg') }}" alt="">
                     </div>
                 </div>
             </div>
@@ -447,19 +658,17 @@
 {{-- End School Dashboard --}}
 
 {{-- Super Admin Dashboard --}}
-@if (Auth::user()->hasRole('Super Admin') || !Auth::user()->school_id)
+@if (auth()->user()->hasRole('Super Admin') || !auth()->user()->school_id)
     <div class="row">
-
         <div class="col-md-3 stretch-card grid-margin">
             <div class="card">
                 <div class="card-body custom-card-body">
                     <div class="d-flex flex-row flex-wrap">
                         <div class="ms-3">
                             {{ __('Total Universities') }}
-                            <p class="text-muted">
+                            <p class="text-muted mb-1">
                             <h3>{{ $super_admin['total_school'] }}</h3>
                             </p>
-                            <p class="mt-2 text-success font-weight-bold"> </p>
                         </div>
                         <img class="ml-auto" src="{{ url('images/total-schools.svg') }}" alt="">
                     </div>
@@ -473,10 +682,9 @@
                     <div class="d-flex flex-row flex-wrap">
                         <div class="ms-3">
                             {{ __('Active Universities') }}
-                            <p class="text-muted">
+                            <p class="text-muted mb-1">
                             <h3>{{ $super_admin['active_schools'] }}</h3>
                             </p>
-                            <p class="mt-2 text-success font-weight-bold"> </p>
                         </div>
                         <img class="ml-auto" src="{{ url('images/active-schools.svg') }}" alt="">
                     </div>
@@ -490,10 +698,9 @@
                     <div class="d-flex flex-row flex-wrap">
                         <div class="ms-3">
                             {{ __('Inactive Universities') }}
-                            <p class="text-muted">
+                            <p class="text-muted mb-1">
                             <h3>{{ $super_admin['inactive_schools'] }}</h3>
                             </p>
-                            <p class="mt-2 text-success font-weight-bold"> </p>
                         </div>
                         <img class="ml-auto" src="{{ url('images/inactive-schools.svg') }}" alt="">
                     </div>
@@ -507,12 +714,77 @@
                     <div class="d-flex flex-row flex-wrap">
                         <div class="ms-3">
                             {{ __('total_packages') }}
-                            <p class="text-muted">
+                            <p class="text-muted mb-1">
                             <h3>{{ $super_admin['total_packages'] }}</h3>
                             </p>
-                            <p class="mt-2 text-success font-weight-bold"> </p>
                         </div>
                         <img class="ml-auto" src="{{ url('images/package.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Total Universities') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['universities']['total']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/total-schools.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Active Universities') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['universities']['active']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/active-schools.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Inactive Universities') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['universities']['inactive']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/inactive-schools.svg') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 stretch-card grid-margin">
+            <div class="card">
+                <div class="card-body custom-card-body">
+                    <div class="d-flex flex-row flex-wrap">
+                        <div class="ms-3">
+                            {{ __('Total Students') }}
+                            <p class="text-muted mb-1">
+                            <h3>{{ number_format($superAdminOverview['students']['total']) }}</h3>
+                            </p>
+                        </div>
+                        <img class="ml-auto" src="{{ url('images/students.svg') }}" alt="">
                     </div>
                 </div>
             </div>
@@ -639,7 +911,7 @@
 @endsection
 @section('script')
 
-@if (Auth::user()->school_id)
+@if (auth()->user()->school_id)
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 @endif
@@ -647,7 +919,7 @@
 
 
 
-@if (!Auth::user()->school_id)
+@if (!auth()->user()->school_id)
 <script>
     window.onload = setTimeout(() => {
         $('.year-filter').trigger('change');
@@ -691,6 +963,35 @@
 @if ($boys || $girls)
 <script>
     gender_ratio(<?php echo $boys; ?>, <?php echo $girls; ?>, <?php echo $total_students; ?>);
+</script>
+@endif
+@if (auth()->user()->hasRole('Super Admin') || !auth()->user()->school_id)
+<script>
+    window.addEventListener('load', function () {
+        applicationTrendChart(
+            @json($applicationTimeline['labels']),
+            @json($applicationTimeline['applications']),
+            @json($applicationTimeline['students'])
+        );
+
+        applicationStatusChart(
+            @json($applicationStatusChart['labels']),
+            @json($applicationStatusChart['data'])
+        );
+
+        renderDonutChart(
+            '#universityStatusChart',
+            @json($universityStatusChart['labels']),
+            @json($universityStatusChart['data'])
+        );
+
+        renderDonutChart(
+            '#studentStatusChart',
+            @json($studentStatusChart['labels']),
+            @json($studentStatusChart['data']),
+            ['#10b981', '#ef4444']
+        );
+    });
 </script>
 @endif
 @endsection

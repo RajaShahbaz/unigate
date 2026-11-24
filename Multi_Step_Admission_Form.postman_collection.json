@@ -1,0 +1,394 @@
+{
+  "info": {
+    "name": "Multi-Step Admission Form API",
+    "description": "Complete API collection for testing multi-step admission form (Mobile App Optimized)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "your-auth-token-here",
+      "type": "string"
+    },
+    {
+      "key": "application_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Get All Form Steps",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/steps",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", "steps"]
+        },
+        "description": "Get all form steps configuration with fields"
+      }
+    },
+    {
+      "name": "2. Get Specific Step",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/steps/:stepNumber",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", "steps", ":stepNumber"],
+          "variable": [
+            {
+              "key": "stepNumber",
+              "value": "1",
+              "description": "Step number (1-7)"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "3. Start New Application",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"university_id\": 1\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/start",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", "start"]
+        }
+      }
+    },
+    {
+      "name": "4. Save Step 1 - Personal Info",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"date_of_birth\": \"2000-01-15\",\n  \"gender\": \"male\",\n  \"nationality\": \"Pakistani\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "1"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "5. Save Step 2 - Contact Details",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+923001234567\",\n  \"current_address\": \"123 Main Street, Lahore, Pakistan\",\n  \"permanent_address\": \"\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/2",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "2"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "6. Save Step 3 - Academic Background",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"previous_school\": \"ABC College\",\n  \"previous_degree\": \"intermediate\",\n  \"graduation_year\": 2023,\n  \"previous_gpa\": 85.5\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/3",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "3"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "7. Save Step 4 - Program Selection",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"interest_id\": 5,\n  \"program_preference_reason\": \"I am passionate about computer science and want to pursue a career in software development.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/4",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "4"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "8. Save Step 5 - Document Upload",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "photo_file",
+              "type": "file",
+              "src": [],
+              "description": "Passport photo (JPG/PNG, max 2MB)"
+            },
+            {
+              "key": "id_document_file",
+              "type": "file",
+              "src": [],
+              "description": "ID document (PDF/Image, max 5MB)"
+            },
+            {
+              "key": "transcript_file",
+              "type": "file",
+              "src": [],
+              "description": "Academic transcript (PDF, max 10MB)"
+            },
+            {
+              "key": "recommendation_letter_file",
+              "type": "file",
+              "src": [],
+              "description": "Recommendation letter (PDF, max 5MB) - Optional"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/5",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "5"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "9. Save Step 6 - Additional Info",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"application_message\": \"I am a dedicated student with a passion for technology. I believe that studying at your university will help me achieve my career goals.\",\n  \"emergency_contact_name\": \"Jane Doe\",\n  \"emergency_contact_phone\": \"+923009876543\",\n  \"emergency_contact_relation\": \"parent\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/step/6",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "step", "6"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "10. Get Application Progress",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/progress",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "progress"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "11. Get Application Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/summary",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "summary"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        },
+        "description": "Get complete summary for review (Step 7)"
+      }
+    },
+    {
+      "name": "12. Submit Application",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/submit",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "submit"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "13. Delete Draft Application",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/multi-step-application/:applicationId/draft",
+          "host": ["{{base_url}}"],
+          "path": ["api", "multi-step-application", ":applicationId", "draft"],
+          "variable": [
+            {
+              "key": "applicationId",
+              "value": "{{application_id}}"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+

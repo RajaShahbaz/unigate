@@ -9,7 +9,7 @@
     :root {
     --primary-color: {{ $settings['theme_primary_color'] ?? '#56cc99' }};
     --secondary-color: {{ $settings['theme_secondary_color'] ?? '#215679' }};
-   
+
 }
 </style>
     <div class="content-wrapper">
@@ -25,7 +25,7 @@
                         @if ($upcoming_package)
                             <h3 class="card-title text-danger">{{ __('note') }} : {{ __('if_youve_already_made_payment_for_your_upcoming_plan_changes_or_updates_to_the_current_and_upcoming_plan_will_not_be_permitted') }}</h3>
                         @endif
-                        
+
                         <div class="row pricing-table mt-4">
                             @foreach ($packages as $package)
                                 <div class="col-md-6 col-xl-4 grid-margin stretch-card pricing-card">
@@ -37,7 +37,7 @@
                                                 <span class="package-type-badge prepaid-color">{{ __('prepaid') }}</span>
                                             @endif
                                         @endif
-                                        
+
                                         <div class="text-center pricing-card-head mb-2">
                                             <h3>{{ __($package->name) }}</h3>
                                             <p>{{ $package->description }}</p>
@@ -121,21 +121,21 @@
                                                                 <form action="{{ url('subscriptions/razorpay') }}" class="razorpay-form-{{ $package->id }}" method="POST"> @csrf
                                                                     <input type="hidden" name="package_id" class="package_id_{{ $package->id }}" value="{{ $package->id }}">
                                                                     <input type="hidden" name="amount" class="bill_amount_{{ $package->id }}" value="{{ $package->charges }}">
-        
+
                                                                     <input type="hidden" name="type" class="type_{{ $package->id }}" value="package">
                                                                     <input type="hidden" name="package_type" class="package_type_{{ $package->id }}" value="immediate">
-        
+
                                                                     <input type="hidden" name="razorpay_payment_id" class="razorpay_payment_id" value="">
                                                                     <input type="hidden" name="razorpay_signature" class="razorpay_signature" value="">
                                                                     <input type="hidden" name="razorpay_order_id" class="razorpay_order_id" value="">
-        
+
                                                                     <input type="hidden" name="paymentTransactionId" class="paymentTransactionId" value="">
-        
+
                                                                     <button class="btn btn-theme w-100" id="razorpay-button-{{ $package->id }}">{{ __('update_current_plan') }}</button>
                                                                 </form>
                                                             @else
                                                                 <a href="#" class="btn start-immediate-plan @if ($package->highlight) btn-success @else btn-primary @endif btn-block" data-type="{{ $package->type }}" data-id="{{ $package->id }}">{{ __('update_current_plan') }}</a>
-                                                            @endif                                                   
+                                                            @endif
                                                         </div>
 
                                                         {{-- Set upcoming --}}
@@ -219,7 +219,7 @@
                         subscription_id : $('.subscription_id').val(),
                         feature_id : $('.feature_id').val(),
                         end_date : $('.end_date').val(),
-                        
+
                     },
                     success: function (response) {
                         if (response.data) {
@@ -229,7 +229,7 @@
                                 "key": "{{ $paymentConfiguration->api_key ?? '' }}", // Enter the Key ID generated from the Dashboard
                                 "amount": $('.bill_amount').val() * 100, // Amount is in currency subunits. Default currency is INR. Hence, 100 refers to 1 INR
                                 "currency": "{{ $system_settings['currency_code'] ?? 'INR' }}",
-                                "name": "{{ $system_settings['system_name'] ?? 'eSchool-Saas' }}",
+                                "name": "{{ $system_settings['system_name'] ?? 'Unigate' }}",
                                 "description": "Razorpay",
                                 "order_id": order_id,
                                 "handler": function(response) {
@@ -253,10 +253,10 @@
                 });
                 e.preventDefault();
             }
-        }, 100); 
-        
+        }, 100);
+
     });
-</script> 
+</script>
 @endforeach
 
 

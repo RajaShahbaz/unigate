@@ -22,6 +22,9 @@ class School extends Model
         'admin_id',
         'status',
         'domain',
+        'promo_code',
+        'discount_percentage',
+        'profit_percentage',
     ];
 
     //Getter Attributes
@@ -36,6 +39,16 @@ class School extends Model
     public function subscription()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Students::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 
     public function addon()

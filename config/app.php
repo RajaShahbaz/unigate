@@ -197,11 +197,10 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-        // ...
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-        'Image' => \Intervention\Image\Facades\Image::class,
-        'PDF'   => Barryvdh\DomPDF\Facade::class,
-    ])->toArray(),
+    // 'aliases' => Facade::defaultAliases()->merge([
+    //     // ...
+    //     'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+    //     'Image' => \Intervention\Image\Facades\Image::class,
+    // ])->toArray(),
 
 ];

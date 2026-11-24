@@ -10,13 +10,18 @@ class CheckSchoolStatus {
 
     public function handle(Request $request, Closure $next) {
         $user = Auth::user();
-        if (isset(Auth::user()->school)) {
+        
+        // If user is not authenticated, skip all checks
+        if (!$user) {
+            return $next($request);
+        }
+        
+        if (isset($user->school)) {
         // Check Student, Teacher status for app
         $requestURL = $request->getRequestUri();
         if (stripos($requestURL, 'api') !== false) { // Api routes
-            if (Auth::user()->hasRole('Student') || Auth::user()->hasRole('Teacher')) {
+            if ($user->hasRole('Student') || $user->hasRole('Teacher')) {
                 if ($user->school->status == 0 || $user->status == 0) {
-                    $user = $request->user();
                     $user->fcm_id = '';
                     $user->save();
                     $user->currentAccessToken()->delete();

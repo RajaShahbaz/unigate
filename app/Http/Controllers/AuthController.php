@@ -25,6 +25,11 @@ class AuthController extends Controller {
 
     public function login() {
         if (Auth::user()) {
+            $user = Auth::user();
+            if (method_exists($user, 'hasRole') && $user->hasRole('Student') && empty($user->school_id)) {
+                return redirect()->route('user.portal.dashboard');
+            }
+
             return redirect('/');
         }
         $systemSettings = $this->cache->getSystemSettings();

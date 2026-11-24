@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239289170302",
+    "project_id": "reina-unigate",
+    "storage_bucket": "reina-unigate.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239289170302:android:3fb980eaea2d765150db2f",
+        "android_client_info": {
+          "package_name": "com.miagroupe.unigate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUqTbpphMRe0ETzFMErqSncEspO-xJCJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

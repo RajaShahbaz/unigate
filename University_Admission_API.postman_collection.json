@@ -1,0 +1,700 @@
+{
+	"info": {
+		"name": "University Admission System API",
+		"description": "Complete API collection for University Admission System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": ["{{base_url}}"],
+							"path": ["login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Public APIs",
+			"item": [
+				{
+					"name": "Get All Interests",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests/all",
+							"host": ["{{base_url}}"],
+							"path": ["interests", "all"]
+						}
+					}
+				},
+				{
+					"name": "Get All Cities",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cities/all",
+							"host": ["{{base_url}}"],
+							"path": ["cities", "all"]
+						}
+					}
+				},
+				{
+					"name": "Get All Universities",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/universities?search=&city_id=&interest_id=&type=&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["universities"],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "city_id",
+									"value": ""
+								},
+								{
+									"key": "interest_id",
+									"value": ""
+								},
+								{
+									"key": "type",
+									"value": ""
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get University Details",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/universities/1",
+							"host": ["{{base_url}}"],
+							"path": ["universities", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Education Management",
+			"item": [
+				{
+					"name": "Get User Education",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/education",
+							"host": ["{{base_url}}"],
+							"path": ["education"]
+						}
+					}
+				},
+				{
+					"name": "Add Education",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"education_level\": \"intermediate\",\n    \"institution_name\": \"Government College\",\n    \"board_university\": \"BISE Lahore\",\n    \"field_of_study\": \"Pre-Engineering\",\n    \"start_year\": 2019,\n    \"end_year\": 2021,\n    \"percentage_cgpa\": 85.5,\n    \"grade_type\": \"percentage\",\n    \"additional_info\": \"Position holder\",\n    \"is_current\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/education",
+							"host": ["{{base_url}}"],
+							"path": ["education"]
+						}
+					}
+				},
+				{
+					"name": "Update Education",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"percentage_cgpa\": 90.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/education/1",
+							"host": ["{{base_url}}"],
+							"path": ["education", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Education",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/education/1",
+							"host": ["{{base_url}}"],
+							"path": ["education", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Interests Management",
+			"item": [
+				{
+					"name": "Get User Interests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests",
+							"host": ["{{base_url}}"],
+							"path": ["interests"]
+						}
+					}
+				},
+				{
+					"name": "Add Interests",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interest_ids\": [1, 2, 5]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/interests",
+							"host": ["{{base_url}}"],
+							"path": ["interests"]
+						}
+					}
+				},
+				{
+					"name": "Sync Interests (Replace All)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interest_ids\": [3, 4, 6]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/interests/sync",
+							"host": ["{{base_url}}"],
+							"path": ["interests", "sync"]
+						}
+					}
+				},
+				{
+					"name": "Remove Interest",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/interests/1",
+							"host": ["{{base_url}}"],
+							"path": ["interests", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Preferred Cities",
+			"item": [
+				{
+					"name": "Get User Cities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/preferred-cities",
+							"host": ["{{base_url}}"],
+							"path": ["preferred-cities"]
+						}
+					}
+				},
+				{
+					"name": "Add Cities",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_ids\": [1, 2, 3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/preferred-cities",
+							"host": ["{{base_url}}"],
+							"path": ["preferred-cities"]
+						}
+					}
+				},
+				{
+					"name": "Sync Cities (Replace All)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_ids\": [2, 3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/preferred-cities/sync",
+							"host": ["{{base_url}}"],
+							"path": ["preferred-cities", "sync"]
+						}
+					}
+				},
+				{
+					"name": "Remove City",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/preferred-cities/1",
+							"host": ["{{base_url}}"],
+							"path": ["preferred-cities", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Universities",
+			"item": [
+				{
+					"name": "Get Recommended Universities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/universities/recommended?per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["universities", "recommended"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Favorites",
+			"item": [
+				{
+					"name": "Get Favorites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/favorites",
+							"host": ["{{base_url}}"],
+							"path": ["favorites"]
+						}
+					}
+				},
+				{
+					"name": "Add to Favorites",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"university_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favorites",
+							"host": ["{{base_url}}"],
+							"path": ["favorites"]
+						}
+					}
+				},
+				{
+					"name": "Toggle Favorite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"university_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favorites/toggle",
+							"host": ["{{base_url}}"],
+							"path": ["favorites", "toggle"]
+						}
+					}
+				},
+				{
+					"name": "Remove from Favorites",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/favorites/1",
+							"host": ["{{base_url}}"],
+							"path": ["favorites", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Universities",
+			"item": [
+				{
+					"name": "Get All Universities (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/universities?search=&status=&per_page=15",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "universities"],
+							"query": [
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "status",
+									"value": ""
+								},
+								{
+									"key": "per_page",
+									"value": "15"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create University",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"FAST NUCES\",\n    \"description\": \"Leading technology university\",\n    \"city_id\": 2,\n    \"address\": \"Main Campus, Lahore\",\n    \"phone\": \"+92-42-111-128-128\",\n    \"email\": \"info@nu.edu.pk\",\n    \"website\": \"https://www.nu.edu.pk\",\n    \"type\": \"private\",\n    \"established_year\": 2000,\n    \"facilities\": \"Library, Labs, Hostel, Sports Complex\",\n    \"ranking\": 4.5,\n    \"tuition_fee_range_min\": 200000,\n    \"tuition_fee_range_max\": 500000,\n    \"hostel_available\": true,\n    \"scholarship_available\": true,\n    \"admission_criteria\": \"Entry test and interview required\",\n    \"accreditation\": \"HEC Recognized\",\n    \"status\": 1,\n    \"interest_ids\": [1, 2, 3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/universities",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "universities"]
+						}
+					}
+				},
+				{
+					"name": "Update University",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ranking\": 5.0,\n    \"tuition_fee_range_max\": 600000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/universities/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "universities", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete University",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/universities/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "universities", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update University Programs",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"interests\": [\n        {\n            \"interest_id\": 1,\n            \"fee\": 450000,\n            \"duration_years\": 4,\n            \"program_details\": \"4-year BS program in Software Engineering\"\n        },\n        {\n            \"interest_id\": 2,\n            \"fee\": 400000,\n            \"duration_years\": 4,\n            \"program_details\": \"4-year BS program in Computer Science\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/universities/1/interests",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "universities", "1", "interests"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Interests",
+			"item": [
+				{
+					"name": "Get All Interests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/interests",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "interests"]
+						}
+					}
+				},
+				{
+					"name": "Create Interest",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Cyber Security\",\n    \"description\": \"Study of computer security and information protection\",\n    \"status\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/interests",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "interests"]
+						}
+					}
+				},
+				{
+					"name": "Update Interest",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Updated description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/interests/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "interests", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Interest",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/interests/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "interests", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin - Cities",
+			"item": [
+				{
+					"name": "Get All Cities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/cities",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "cities"]
+						}
+					}
+				},
+				{
+					"name": "Create City",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Karachi\",\n    \"state_province\": \"Sindh\",\n    \"country\": \"Pakistan\",\n    \"status\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/cities",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "cities"]
+						}
+					}
+				},
+				{
+					"name": "Update City",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated City Name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/cities/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "cities", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete City",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/cities/1",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "cities", "1"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
+

@@ -1,13 +1,11 @@
-<!-- Button trigger modal -->
-{{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-    Launch static backdrop modal
-</button> --}}
-<div class="modal fade formModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- School SaaS registration (distinct id so #staticBackdrop is reserved for student create-account modal) -->
+{{-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#schoolRegistrationModal">...</button> --}}
+<div class="modal fade formModal" id="schoolRegistrationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="schoolRegistrationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered  modal-xl">
         <div class="modal-content row">
             <div class="col-12 rightSide">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ __('registration_form') }}</h1>
+                    <h1 class="modal-title fs-5" id="schoolRegistrationModalLabel">{{ __('registration_form') }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
